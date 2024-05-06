@@ -18,80 +18,151 @@ class _GalleryPageState extends State<GalleryPage> {
 
   @override
   void initState() {
-    galleryViewModel.fetchFloorplanList();
+    galleryViewModel.fetchCategorizedFloorplans();
     super.initState();
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
+
+  void _deleteCardFloorplan(int floorplanId) async {
+    final message = await galleryViewModel.deleteFloorplan(floorplanId);
+    _showSnackbar(message);
+  }
+
+  void _handleBackButton() {
+    // TODO: implement onPressed back button
+  }
+
+  void handleClick(String value) {
+    switch (value) {
+      case 'Edit':
+        // TODO: implement onPressed edit
+        break;
+      case 'Select All':
+        // TODO: implement onPressed select all
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.primaryColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: Text(widget.title, style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w600)),
-        leading: IconButton(
-          onPressed: () {
-            // TODO: implement onPressed back button
-          },
-          icon: Icon(Icons.arrow_back_sharp, color: widget.secondaryColor),
+        backgroundColor: widget.primaryColor,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(widget.title, style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w600)),
+          leading: IconButton(
+            onPressed: _handleBackButton,
+            icon: Icon(Icons.arrow_back_sharp, color: widget.secondaryColor),
+          ),
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: handleClick,
+              color: widget.tertiaryColor,
+              icon: Icon(Icons.more_vert_sharp, color: widget.secondaryColor),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: widget.secondaryColor, width: 1.5),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              itemBuilder: (BuildContext context) {
+                return {'Edit', 'Select All'}.map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice, style: TextStyle(color: widget.secondaryColor)),
+                  );
+                }).toList();
+              },
+            ),
+          ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // TODO: implement onPressed more button
-            },
-            icon: Icon(Icons.more_vert_sharp, color: widget.secondaryColor),
-          )
-        ],
+        body: ChangeNotifierProvider<GalleryViewModel>(
+          create: (BuildContext context) => galleryViewModel,
+          child: Consumer<GalleryViewModel>(builder: (context, value, _) {
+            switch (value.categoryList.status) {
+              case Status.loading:
+                return _buildLoading();
+              case Status.error:
+                WidgetsBinding.instance.addPostFrameCallback((_) => _showSnackbar(value.categoryList.message.toString()));
+                return _buildError();
+              case Status.completed:
+                return _buildGallery();
+              default:
+            }
+            return Container();
+          }),
+        ));
+  }
+
+  Widget _buildLoading() {
+    return Align(
+      alignment: Alignment.center,
+      child: CircularProgressIndicator(color: widget.secondaryColor),
+    );
+  }
+
+  Widget _buildError() {
+    return Align(
+      alignment: Alignment.center,
+      child: ElevatedButton(
+        onPressed: _handleBackButton,
+        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(widget.tertiaryColor)),
+        child: Text('Kembali ke Homepage', style: TextStyle(color: widget.secondaryColor)),
       ),
-      body: ChangeNotifierProvider<GalleryViewModel>(
-        create: (BuildContext context) => galleryViewModel,
-        child: Consumer<GalleryViewModel>(builder: (context, value, _) {
-          switch (value.floorplanList.status) {
-            case Status.loading:
-              return const Align(
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(),
-              );
-            case Status.error:
-              var snackBar = SnackBar(
-                content: Text(value.floorplanList.message.toString(), style: TextStyle(color: widget.secondaryColor)),
-              );
-              WidgetsBinding.instance.addPostFrameCallback((_) => ScaffoldMessenger.of(context).showSnackBar(snackBar));
-              return Align(
-                alignment: Alignment.center,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: implement onPressed back button
-                  },
-                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(widget.tertiaryColor)),
-                  child: Text('Kembali ke Homepage', style: TextStyle(color: widget.secondaryColor)),
-                ),
-              );
-            case Status.completed:
-              return Container(
-                margin: const EdgeInsets.all(16),
-                child: GridView.builder(
-                  itemCount: value.floorplanList.data?.length,
-                  itemBuilder: (context, index) {
-                    return CardFloorplan(
-                      floorplan: value.floorplanList.data!.elementAt(index),
-                      secondaryColor: widget.secondaryColor,
-                      tertiaryColor: widget.tertiaryColor,
-                    );
-                  },
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                ),
-              );
-            default:
-          }
-          return Container();
-        }),
-      ),
+    );
+  }
+
+  Widget _buildGallery() {
+    if (galleryViewModel.categoryList.data != null && galleryViewModel.categoryList.data!.isNotEmpty) {
+      return Container(
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: ListView.builder(
+          itemCount: galleryViewModel.categoryList.data?.length,
+          itemBuilder: (context, index) {
+            final category = galleryViewModel.categoryList.data![index];
+            return _buildCategory(category.label, category.floorplans);
+          },
+        ),
+      );
+    } else {
+      return Align(
+        alignment: Alignment.center,
+        child: Text('Gallery anda kosong', style: TextStyle(color: widget.secondaryColor)),
+      );
+    }
+  }
+
+  Widget _buildCategory(String label, List<Floorplan> floorplans) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Text(
+            label,
+            style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.bold),
+          ),
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          itemCount: floorplans.length,
+          itemBuilder: (context, index) {
+            return CardFloorplan(
+              floorplan: floorplans.elementAt(index),
+              onDelete: _deleteCardFloorplan,
+              secondaryColor: widget.secondaryColor,
+              tertiaryColor: widget.tertiaryColor,
+            );
+          },
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }
