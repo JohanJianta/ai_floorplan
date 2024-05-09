@@ -17,9 +17,7 @@ class Floorplan extends Equatable {
         floorplanId: json['floorplanId'] as int?,
         imageData: json['imageData'] as String?,
         prompt: json['prompt'] as String?,
-        createTime: json['createTime'] == null
-            ? null
-            : DateTime.parse(json['createTime'] as String),
+        createTime: json['createTime'] == null ? null : DateTime.parse(json['createTime'] as String),
       );
 
   Map<String, dynamic> toJson() => {

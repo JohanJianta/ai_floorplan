@@ -14,7 +14,9 @@ class GalleryPage extends StatefulWidget {
 }
 
 class _GalleryPageState extends State<GalleryPage> {
-  GalleryViewModel galleryViewModel = GalleryViewModel();
+  final GalleryViewModel galleryViewModel = GalleryViewModel();
+  final List<Floorplan> _selectedList = [];
+  bool _selectionView = false; // penanda mode selection sedang aktif atau tidak
 
   @override
   void initState() {
@@ -26,33 +28,71 @@ class _GalleryPageState extends State<GalleryPage> {
     ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
   }
 
-  void _deleteCardFloorplan(int floorplanId) async {
-    final message = await galleryViewModel.deleteFloorplan(floorplanId);
-    _showSnackbar(message);
+  void _handleDeleteCard(Floorplan floorplan) async {
+    _deleteAllCardFloorplans([floorplan]);
+  }
+
+  void _deleteAllCardFloorplans(List<Floorplan> floorplans) async {
+    bool isConfirmed = await _showAlertDialog();
+    if (isConfirmed) {
+      final message = await galleryViewModel.deleteFloorplans(floorplans);
+      _showSnackbar(message);
+
+      setState(() => _selectionView = false);
+    }
+  }
+
+  void _handleSelectCard(Floorplan? floorplan) {
+    if (floorplan != null) {
+      if (_selectedList.contains(floorplan)) {
+        _selectedList.remove(floorplan);
+      } else {
+        _selectedList.add(floorplan);
+      }
+    }
+    setState(() => _selectionView = true);
   }
 
   void _handleBackButton() {
-    // TODO: implement onPressed back button
+    if (_selectionView) {
+      setState(() => _selectionView = false);
+      _selectedList.clear();
+    } else {
+      // TODO: implement onPressed back button
+    }
   }
 
   void handleClick(String value) {
     switch (value) {
       case 'Edit':
-        // TODO: implement onPressed edit
+        _handleSelectCard(null);
         break;
       case 'Select All':
-        // TODO: implement onPressed select all
+        galleryViewModel.categoryList.data?.forEach((category) {
+          setState(() {
+            _selectedList.addAll(category.floorplans);
+            _selectionView = true;
+          });
+        });
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        _handleBackButton();
+        return false;
+      },
+      child: Scaffold(
         backgroundColor: widget.primaryColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text(widget.title, style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w600)),
+          title: Text(
+            _selectionView ? '${_selectedList.length}  Dipilih' : widget.title,
+            style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w600),
+          ),
           leading: IconButton(
             onPressed: _handleBackButton,
             icon: Icon(Icons.arrow_back_sharp, color: widget.secondaryColor),
@@ -92,7 +132,10 @@ class _GalleryPageState extends State<GalleryPage> {
             }
             return Container();
           }),
-        ));
+        ),
+        bottomNavigationBar: _selectionView ? _buildBottomNavbar() : null,
+      ),
+    );
   }
 
   Widget _buildLoading() {
@@ -138,7 +181,7 @@ class _GalleryPageState extends State<GalleryPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
             label,
             style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.bold),
@@ -146,23 +189,80 @@ class _GalleryPageState extends State<GalleryPage> {
         ),
         GridView.builder(
           shrinkWrap: true,
+          physics: const ScrollPhysics(),
           itemCount: floorplans.length,
           itemBuilder: (context, index) {
             return CardFloorplan(
               floorplan: floorplans.elementAt(index),
-              onDelete: _deleteCardFloorplan,
+              selectionView: _selectionView,
+              isSelected: _selectedList.contains(floorplans.elementAt(index)),
+              onDelete: _handleDeleteCard,
+              onSelected: _handleSelectCard,
               secondaryColor: widget.secondaryColor,
               tertiaryColor: widget.tertiaryColor,
             );
           },
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
       ],
     );
+  }
+
+  Widget _buildBottomNavbar() {
+    return BottomNavigationBar(
+      backgroundColor: widget.tertiaryColor,
+      selectedItemColor: widget.secondaryColor,
+      unselectedItemColor: widget.secondaryColor,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.delete_sharp), label: 'Delete'),
+        BottomNavigationBarItem(icon: Icon(Icons.share_sharp), label: 'Share'),
+      ],
+      onTap: (value) {
+        switch (value) {
+          case 0:
+            _deleteAllCardFloorplans(_selectedList);
+          case 1:
+            List<String> imageUrlList = List.generate(_selectedList.length, (index) => 'https://foyr.com/learn/wp-content/uploads/2021/12/best-floor-plan-apps-1.jpg');
+            Util.shareImages(context, imageUrlList);
+        }
+      },
+    );
+  }
+
+  Future<bool> _showAlertDialog() async {
+    Completer<bool> completer = Completer<bool>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Konfirmasi Penghapusan"),
+          content: const Text("Apakah anda yakin ingin memindahkan floorplan ke trash bin?"),
+          actions: [
+            TextButton(
+              child: const Text("Batal"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                completer.complete(false);
+              },
+            ),
+            TextButton(
+              child: const Text("Lanjut"),
+              onPressed: () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                completer.complete(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    return completer.future;
   }
 }

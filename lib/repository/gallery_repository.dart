@@ -21,9 +21,9 @@ class GalleryRepository {
     }
   }
 
-  Future<String> deleteFloorplan(int floorplanId) async {
+  Future<String> deleteFloorplans(List<int> floorplanIds) async {
     try {
-      dynamic response = await _apiServices.getDeleteApiResponse('/gallery/$floorplanId');
+      dynamic response = await _apiServices.getDeleteApiResponse('/gallery?floorplanIds=${floorplanIds.join(',')}');
 
       String result = '';
 

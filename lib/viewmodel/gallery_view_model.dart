@@ -17,6 +17,7 @@ class GalleryViewModel with ChangeNotifier {
     setFloorplanList(ApiResponse.loading());
 
     try {
+      // Ambil data gallery dari database, kemudian sortir sebelum dikembalikan
       List<Floorplan> response = await _galleryRepo.fetchFloorplanList();
       setFloorplanList(ApiResponse.completed(_categorizeFloorplans(response)));
     } catch (error) {
@@ -24,13 +25,25 @@ class GalleryViewModel with ChangeNotifier {
     }
   }
 
-  Future<String> deleteFloorplan(int floorplanId) async {
+  Future<String> deleteFloorplans(List<Floorplan> floorplans) async {
     try {
-      String value = await _galleryRepo.deleteFloorplan(floorplanId);
+      List<int> floorplanIds = [];
 
+      // Ambil daftar floorplan id
+      for (var floorplan in floorplans) {
+        if (floorplan.floorplanId != null) {
+          floorplanIds.add(floorplan.floorplanId!);
+        }
+      }
+
+      String value = await _galleryRepo.deleteFloorplans(floorplanIds);
+
+      // Hapus card dari daftar card
       categoryList.data?.forEach((category) {
-        category.floorplans.removeWhere((floorplan) => floorplan.floorplanId == floorplanId);
+        category.floorplans.removeWhere((floorplan) => floorplans.contains(floorplan));
       });
+
+      // Hapus kategori yang tidak memiliki card
       categoryList.data?.removeWhere((category) => category.floorplans.isEmpty);
 
       notifyListeners();
@@ -47,6 +60,7 @@ class GalleryViewModel with ChangeNotifier {
 
     Map<String, List<Floorplan>> categorizedMap = {};
 
+    // Sortir floorplan berdasarkan kategori
     for (var floorplan in floorplans) {
       if (_isToday(floorplan.createTime)) {
         _addToCategory(categorizedMap, 'Today', floorplan);
@@ -77,6 +91,7 @@ class GalleryViewModel with ChangeNotifier {
     return DateFormat('MMMM yyyy').format(dateTime);
   }
 
+  // Masukkan floorplan ke dalam kategori
   void _addToCategory(Map<String, List<Floorplan>> categorizedMap, String category, Floorplan floorplan) {
     categorizedMap.putIfAbsent(category, () => []);
     categorizedMap[category]!.add(floorplan);

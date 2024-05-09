@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ai_floorplan_test/data/response/status.dart';
 import 'package:ai_floorplan_test/model/floorplan.dart';
 import 'package:ai_floorplan_test/shared/shared.dart';
