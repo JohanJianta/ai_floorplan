@@ -15,7 +15,7 @@ class GalleryPage extends StatefulWidget {
 
 class _GalleryPageState extends State<GalleryPage> {
   final GalleryViewModel galleryViewModel = GalleryViewModel();
-  final List<Floorplan> _selectedList = [];
+  final Set<Floorplan> _selectedList = {}; // pakai Set biar tidak ada data kembar
   bool _selectionView = false; // penanda mode selection sedang aktif atau tidak
 
   @override
@@ -29,16 +29,19 @@ class _GalleryPageState extends State<GalleryPage> {
   }
 
   void _handleDeleteCard(Floorplan floorplan) async {
-    _deleteAllCardFloorplans([floorplan]);
+    _deleteAllCardFloorplans({floorplan});
   }
 
-  void _deleteAllCardFloorplans(List<Floorplan> floorplans) async {
+  void _deleteAllCardFloorplans(Set<Floorplan> floorplans) async {
     bool isConfirmed = await _showAlertDialog();
     if (isConfirmed) {
       final message = await galleryViewModel.deleteFloorplans(floorplans);
       _showSnackbar(message);
 
-      setState(() => _selectionView = false);
+      setState(() {
+        _selectedList.clear();
+        _selectionView = false;
+      });
     }
   }
 
@@ -58,7 +61,7 @@ class _GalleryPageState extends State<GalleryPage> {
       setState(() => _selectionView = false);
       _selectedList.clear();
     } else {
-      // TODO: implement onPressed back button
+      Navigator.of(context).pop();
     }
   }
 
@@ -68,12 +71,14 @@ class _GalleryPageState extends State<GalleryPage> {
         _handleSelectCard(null);
         break;
       case 'Select All':
-        galleryViewModel.categoryList.data?.forEach((category) {
+        if (galleryViewModel.categoryList.data != null) {
           setState(() {
-            _selectedList.addAll(category.floorplans);
+            galleryViewModel.categoryList.data?.forEach((category) {
+              _selectedList.addAll(category.floorplans);
+            });
             _selectionView = true;
           });
-        });
+        }
         break;
     }
   }
@@ -139,15 +144,13 @@ class _GalleryPageState extends State<GalleryPage> {
   }
 
   Widget _buildLoading() {
-    return Align(
-      alignment: Alignment.center,
+    return Center(
       child: CircularProgressIndicator(color: widget.secondaryColor),
     );
   }
 
   Widget _buildError() {
-    return Align(
-      alignment: Alignment.center,
+    return Center(
       child: ElevatedButton(
         onPressed: _handleBackButton,
         style: ButtonStyle(backgroundColor: MaterialStateProperty.all(widget.tertiaryColor)),
@@ -169,8 +172,7 @@ class _GalleryPageState extends State<GalleryPage> {
         ),
       );
     } else {
-      return Align(
-        alignment: Alignment.center,
+      return Center(
         child: Text('Gallery anda kosong', style: TextStyle(color: widget.secondaryColor)),
       );
     }
@@ -192,7 +194,7 @@ class _GalleryPageState extends State<GalleryPage> {
           physics: const ScrollPhysics(),
           itemCount: floorplans.length,
           itemBuilder: (context, index) {
-            return CardFloorplan(
+            return CardGallery(
               floorplan: floorplans.elementAt(index),
               selectionView: _selectionView,
               isSelected: _selectedList.contains(floorplans.elementAt(index)),
@@ -219,16 +221,18 @@ class _GalleryPageState extends State<GalleryPage> {
       selectedItemColor: widget.secondaryColor,
       unselectedItemColor: widget.secondaryColor,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.delete_sharp), label: 'Delete'),
         BottomNavigationBarItem(icon: Icon(Icons.share_sharp), label: 'Share'),
+        BottomNavigationBarItem(icon: Icon(Icons.delete_sharp), label: 'Delete'),
       ],
       onTap: (value) {
         switch (value) {
           case 0:
-            _deleteAllCardFloorplans(_selectedList);
-          case 1:
             List<String> imageUrlList = List.generate(_selectedList.length, (index) => 'https://foyr.com/learn/wp-content/uploads/2021/12/best-floor-plan-apps-1.jpg');
             Util.shareImages(context, imageUrlList);
+            break;
+          case 1:
+            _deleteAllCardFloorplans(_selectedList);
+            break;
         }
       },
     );
@@ -254,7 +258,7 @@ class _GalleryPageState extends State<GalleryPage> {
             TextButton(
               child: const Text("Lanjut"),
               onPressed: () {
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.of(context).popUntil((route) => route.settings.name == '/gallery');
                 completer.complete(true);
               },
             ),

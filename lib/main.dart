@@ -17,7 +17,33 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const GalleryPage(title: 'Gallery'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Builder(
+              builder: (context) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/gallery');
+                      },
+                      child: const Text('Go to Gallery'),
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/trashbin');
+                      },
+                      child: const Text('Go to Trash Bin'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        '/gallery': (context) => const GalleryPage(title: 'Gallery'),
+        '/trashbin': (context) => const TrashbinPage(title: 'Trash Bin'),
+      },
     );
   }
 }

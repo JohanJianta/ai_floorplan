@@ -1,6 +1,4 @@
-import 'package:ai_floorplan_test/data/network/network_api_services.dart';
-import 'package:ai_floorplan_test/model/floorplan.dart';
-import 'package:ai_floorplan_test/shared/shared.dart';
+part of 'repository.dart';
 
 class GalleryRepository {
   final _apiServices = NetworkApiServices();
@@ -21,7 +19,7 @@ class GalleryRepository {
     }
   }
 
-  Future<String> deleteFloorplans(List<int> floorplanIds) async {
+  Future<String> deleteFloorplans(Set<int> floorplanIds) async {
     try {
       dynamic response = await _apiServices.getDeleteApiResponse('/gallery?floorplanIds=${floorplanIds.join(',')}');
 

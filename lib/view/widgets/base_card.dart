@@ -1,27 +1,40 @@
 part of 'widgets.dart';
 
-class CardFloorplan extends StatefulWidget {
+abstract class CardBase extends StatefulWidget {
   final Floorplan floorplan;
   final bool selectionView;
   final Color tertiaryColor;
   final Color secondaryColor;
   final bool isSelected;
-  final Function(Floorplan) onDelete;
   final Function(Floorplan) onSelected;
 
-  const CardFloorplan({super.key, required this.floorplan, required this.selectionView, required this.isSelected, required this.secondaryColor, required this.tertiaryColor, required this.onDelete, required this.onSelected});
+  const CardBase({
+    super.key,
+    required this.floorplan,
+    required this.selectionView,
+    required this.isSelected,
+    required this.secondaryColor,
+    required this.tertiaryColor,
+    required this.onSelected,
+  });
 
   @override
-  State<CardFloorplan> createState() => _CardFloorplanState();
+  BaseCardState<CardBase> createState();
 }
 
-class _CardFloorplanState extends State<CardFloorplan> {
+abstract class BaseCardState<T extends CardBase> extends State<T> {
   final String _url = 'https://foyr.com/learn/wp-content/uploads/2021/12/best-floor-plan-apps-1.jpg';
   // final String _url = 'https://medialibrarycfo.entrata.com/4104/MLv3/4/22/2023/04/07/092045/643034cd565304.45217433746.png';
   // final Image _image = Image.memory(base64Decode(encodedImage), fit: BoxFit.fill);
 
   late bool _isSelected;
   late double _maskOpacity;
+
+  // Method abstrak untuk tambah widget di thumbnail
+  Widget addThumbnailProperty();
+
+  // Method abstrak untuk buat daftar action button
+  List<Widget> listActionButtons();
 
   void _setSelectedStatus() {
     if (!widget.selectionView) {
@@ -32,17 +45,19 @@ class _CardFloorplanState extends State<CardFloorplan> {
         setState(() => _isSelected = widget.isSelected);
       });
 
-      if (_isSelected) {
-        _maskOpacity = 0.55;
-      } else {
-        _maskOpacity = 0;
-      }
+      _maskOpacity = _isSelected ? 0.55 : 0;
     }
   }
 
   void _handleSelection() {
     widget.onSelected(widget.floorplan);
     setState(() => _isSelected = !_isSelected);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _setSelectedStatus();
   }
 
   @override
@@ -61,6 +76,7 @@ class _CardFloorplanState extends State<CardFloorplan> {
           children: [
             Image.network(_url, fit: BoxFit.fill, colorBlendMode: BlendMode.srcATop, color: Colors.black.withOpacity(_maskOpacity)),
             widget.selectionView ? _buildSelection() : Container(),
+            addThumbnailProperty(),
           ],
         ),
       ),
@@ -133,22 +149,7 @@ class _CardFloorplanState extends State<CardFloorplan> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildActionButton(
-                        icon: Icons.delete_sharp,
-                        onPressed: () => widget.onDelete(widget.floorplan),
-                      ),
-                      const SizedBox(width: 16),
-                      _buildActionButton(
-                        icon: Icons.download_sharp,
-                        onPressed: () => Util.saveImage(context, _url),
-                      ),
-                      const SizedBox(width: 16),
-                      _buildActionButton(
-                        icon: Icons.share_sharp,
-                        onPressed: () => Util.shareImages(context, [_url]),
-                      ),
-                    ],
+                    children: listActionButtons(),
                   ),
                 ],
               ),
@@ -157,7 +158,7 @@ class _CardFloorplanState extends State<CardFloorplan> {
     );
   }
 
-  Widget _buildActionButton({required IconData icon, required VoidCallback onPressed}) {
+  Widget buildActionButton({required IconData icon, required VoidCallback onPressed}) {
     return Expanded(
       child: Container(
         height: 50,

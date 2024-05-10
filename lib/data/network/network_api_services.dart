@@ -32,6 +32,24 @@ class NetworkApiServices implements BaseApiServices {
   }
 
   @override
+  Future getPutApiResponse(String endpoint, data) async {
+    dynamic responseJson;
+    try {
+      final response = await http.put(Uri.parse(Const.baseUrl + endpoint), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': Const.auth,
+      });
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw NoInternetException('Pastikan anda terhubung ke internet');
+    } on TimeoutException {
+      throw FetchDataException('Network request timed out');
+    }
+
+    return responseJson;
+  }
+
+  @override
   Future getDeleteApiResponse(String endpoint) async {
     dynamic responseJson;
     try {

@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:ai_floorplan_test/data/response/api_response.dart';
-import 'package:ai_floorplan_test/model/floorplan.dart';
-import 'package:ai_floorplan_test/repository/gallery_repository.dart';
+part of 'view_model.dart';
 
 class GalleryViewModel with ChangeNotifier {
   final GalleryRepository _galleryRepo = GalleryRepository();
@@ -25,9 +21,9 @@ class GalleryViewModel with ChangeNotifier {
     }
   }
 
-  Future<String> deleteFloorplans(List<Floorplan> floorplans) async {
+  Future<String> deleteFloorplans(Set<Floorplan> floorplans) async {
     try {
-      List<int> floorplanIds = [];
+      Set<int> floorplanIds = {};
 
       // Ambil daftar floorplan id
       for (var floorplan in floorplans) {
@@ -38,12 +34,12 @@ class GalleryViewModel with ChangeNotifier {
 
       String value = await _galleryRepo.deleteFloorplans(floorplanIds);
 
-      // Hapus card dari daftar card
+      // Hapus floorplan dari daftar floorplan
       categoryList.data?.forEach((category) {
         category.floorplans.removeWhere((floorplan) => floorplans.contains(floorplan));
       });
 
-      // Hapus kategori yang tidak memiliki card
+      // Hapus kategori yang tidak memiliki floorplan
       categoryList.data?.removeWhere((category) => category.floorplans.isEmpty);
 
       notifyListeners();
