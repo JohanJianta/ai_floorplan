@@ -1,9 +1,9 @@
 part of 'widgets.dart';
 
-class CardGallery extends CardBase {
+class GalleryCard extends CardBase {
   final Function(Floorplan) onDelete;
 
-  const CardGallery({
+  const GalleryCard({
     super.key,
     required super.floorplan,
     required super.selectionView,
@@ -15,10 +15,10 @@ class CardGallery extends CardBase {
   });
 
   @override
-  BaseCardState<CardGallery> createState() => _CardGalleryState();
+  BaseCardState<GalleryCard> createState() => _CardGalleryState();
 }
 
-class _CardGalleryState extends BaseCardState<CardGallery> {
+class _CardGalleryState extends BaseCardState<GalleryCard> {
   @override
   Widget addThumbnailProperty() {
     return const SizedBox.shrink();

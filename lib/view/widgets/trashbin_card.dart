@@ -1,10 +1,10 @@
 part of 'widgets.dart';
 
-class CardTrashbin extends CardBase {
+class TrashbinCard extends CardBase {
   final Function(Floorplan) onRestore;
   final Function(Floorplan) onDelete;
 
-  const CardTrashbin({
+  const TrashbinCard({
     super.key,
     required super.floorplan,
     required super.selectionView,
@@ -17,10 +17,10 @@ class CardTrashbin extends CardBase {
   });
 
   @override
-  BaseCardState<CardTrashbin> createState() => _CardTrashbinState();
+  BaseCardState<TrashbinCard> createState() => _CardTrashbinState();
 }
 
-class _CardTrashbinState extends BaseCardState<CardTrashbin> {
+class _CardTrashbinState extends BaseCardState<TrashbinCard> {
   @override
   Widget addThumbnailProperty() {
     return Align(

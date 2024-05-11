@@ -194,7 +194,7 @@ class _GalleryPageState extends State<GalleryPage> {
           physics: const ScrollPhysics(),
           itemCount: floorplans.length,
           itemBuilder: (context, index) {
-            return CardGallery(
+            return GalleryCard(
               floorplan: floorplans.elementAt(index),
               selectionView: _selectionView,
               isSelected: _selectedList.contains(floorplans.elementAt(index)),

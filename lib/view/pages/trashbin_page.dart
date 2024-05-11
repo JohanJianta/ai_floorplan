@@ -190,7 +190,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
                 physics: const ScrollPhysics(),
                 itemCount: trashbinViewModel.floorplanList.data?.length,
                 itemBuilder: (context, index) {
-                  return CardTrashbin(
+                  return TrashbinCard(
                     floorplan: trashbinViewModel.floorplanList.data!.elementAt(index),
                     selectionView: _selectionView,
                     isSelected: _selectedList.contains(trashbinViewModel.floorplanList.data!.elementAt(index)),
