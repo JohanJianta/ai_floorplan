@@ -25,13 +25,14 @@ class GalleryViewModel with ChangeNotifier {
     try {
       Set<int> floorplanIds = {};
 
-      // Ambil daftar floorplan id
+      // Ambil daftar id floorplan
       for (var floorplan in floorplans) {
         if (floorplan.floorplanId != null) {
           floorplanIds.add(floorplan.floorplanId!);
         }
       }
 
+      // Hapus floorplan dari galeri berdasarkan daftar id floorplan
       String value = await _galleryRepo.deleteFloorplans(floorplanIds);
 
       // Hapus floorplan dari daftar floorplan

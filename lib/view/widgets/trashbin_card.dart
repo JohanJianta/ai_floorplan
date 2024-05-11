@@ -68,13 +68,15 @@ class _CardTrashbinState extends BaseCardState<TrashbinCard> {
     Duration difference = limit.difference(now);
 
     if (difference.inDays > 0 && difference.inDays < 30) {
-      return '${difference.inDays} days';
+      return '${difference.inDays} hari';
     } else if (difference.inHours > 0 && difference.inHours < 24) {
-      return '${difference.inHours} hours';
+      return '${difference.inHours} jam';
     } else if (difference.inMinutes > 0 && difference.inMinutes < 60) {
-      return '${difference.inMinutes} minutes';
+      return '${difference.inMinutes} menit';
+    } else if (difference.inSeconds > 0 && difference.inSeconds < 60) {
+      return '${difference.inSeconds} detik';
     } else {
-      return '${difference.inSeconds} seconds';
+      return '??? days';
     }
   }
 }
