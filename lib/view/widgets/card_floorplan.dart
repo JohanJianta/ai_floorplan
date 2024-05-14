@@ -2,7 +2,11 @@ part of 'widgets.dart';
 
 class CardFloorplan extends StatefulWidget {
   final Floorplan floorplan;
-  const CardFloorplan({super.key, required this.floorplan, required this.secondaryColor, required this.tertiaryColor});
+  const CardFloorplan(
+      {super.key,
+      required this.floorplan,
+      required this.secondaryColor,
+      required this.tertiaryColor});
 
   final Color tertiaryColor;
   final Color secondaryColor;
@@ -56,7 +60,8 @@ class _CardFloorplanState extends State<CardFloorplan> {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: 120,
-                    margin: const EdgeInsets.symmetric(vertical: 24, horizontal: 0),
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 24, horizontal: 0),
                     padding: const EdgeInsets.all(16),
                     color: widget.tertiaryColor,
                     alignment: Alignment.center,
@@ -83,7 +88,8 @@ class _CardFloorplanState extends State<CardFloorplan> {
                           onPressed: () {
                             // TODO: implement onPressed delete floorplan
                           },
-                          icon: Icon(Icons.delete_sharp, color: widget.secondaryColor),
+                          icon: Icon(Icons.delete_sharp,
+                              color: widget.secondaryColor),
                         ),
                       ),
                       const SizedBox(width: 24),
@@ -91,7 +97,8 @@ class _CardFloorplanState extends State<CardFloorplan> {
                         width: (MediaQuery.of(context).size.width - 128) / 3,
                         height: 50,
                         color: widget.tertiaryColor,
-                        child: DownloadButton(secondaryColor: widget.secondaryColor),
+                        child: DownloadButton(
+                            secondaryColor: widget.secondaryColor),
                       ),
                       const SizedBox(width: 24),
                       Container(
@@ -102,7 +109,8 @@ class _CardFloorplanState extends State<CardFloorplan> {
                           onPressed: () {
                             // TODO: implement onPressed share floorplan
                           },
-                          icon: Icon(Icons.share_sharp, color: widget.secondaryColor),
+                          icon: Icon(Icons.share_sharp,
+                              color: widget.secondaryColor),
                         ),
                       )
                     ],

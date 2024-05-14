@@ -5,7 +5,8 @@ class DownloadButton extends StatelessWidget {
 
   final Color secondaryColor;
 
-  final String url = 'https://foyr.com/learn/wp-content/uploads/2021/12/best-floor-plan-apps-1.jpg';
+  final String url =
+      'https://foyr.com/learn/wp-content/uploads/2021/12/best-floor-plan-apps-1.jpg';
 
   @override
   Widget build(BuildContext context) {
