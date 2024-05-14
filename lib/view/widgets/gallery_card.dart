@@ -29,12 +29,12 @@ class _CardGalleryState extends BaseCardState<GalleryCard> {
     return [
       buildActionButton(
         icon: Icons.share_sharp,
-        onPressed: () => Util.shareImages(context, [_url]),
+        onPressed: () => Util.shareImages(context, [widget.floorplan.imageData!]),
       ),
       const SizedBox(width: 16),
       buildActionButton(
         icon: Icons.download_sharp,
-        onPressed: () => Util.saveImage(context, _url),
+        onPressed: () => Util.saveImage(context, widget.floorplan.imageData!),
       ),
       const SizedBox(width: 16),
       buildActionButton(

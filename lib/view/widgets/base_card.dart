@@ -74,7 +74,13 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(_url, fit: BoxFit.fill, colorBlendMode: BlendMode.srcATop, color: Colors.black.withOpacity(_maskOpacity)),
+            Image.memory(
+              base64Decode(widget.floorplan.imageData!),
+              fit: BoxFit.fill,
+              gaplessPlayback: true,
+              colorBlendMode: BlendMode.srcATop,
+              color: Colors.black.withOpacity(_maskOpacity),
+            ),
             widget.selectionView ? _buildSelection() : Container(),
             addThumbnailProperty(),
           ],
@@ -94,7 +100,7 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                 height: 20,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.tertiaryColor.withOpacity(0.3),
+                  color: widget.tertiaryColor.withOpacity(0.4),
                   border: Border.all(width: 2.5, color: widget.tertiaryColor),
                 ))
             : const Icon(
@@ -131,7 +137,7 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Image.network(_url),
+                  Image.memory(base64Decode(widget.floorplan.imageData!)),
                   Container(
                     height: 120,
                     margin: const EdgeInsets.symmetric(vertical: 24),
