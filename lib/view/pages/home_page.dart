@@ -66,33 +66,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 SizedBox(width: 16),
-                Container(
-                  width: 30,
-                  height: 30,
-                  child: FloatingActionButton(
+                ClipOval(
+                  child:Container(
+                  color:Color(0xFFE1CDB5) ,
+                  width: 37,
+                  height: 37,
+                  child: IconButton(
                     onPressed: () {
-                      // Camera function
                     },
-                    child: Icon(Icons.camera_alt),
-                    mini: true,
-                    backgroundColor: Color(0xFFE1CDB5), // Color E1CDB5
-                    shape: CircleBorder(),
+                    icon: Icon(Icons.camera_alt),
+                    iconSize: 22,
                   ),
                 ),
+              ),  
                 SizedBox(width: 16),
-                Container(
-                  width: 30,
-                  height: 30,
-                  child: FloatingActionButton(
+                ClipOval(child: 
+                 Container(
+                  color:Color(0xFFE1CDB5) ,
+                  width: 37,
+                  height: 37,
+                  child: IconButton(
                     onPressed: () {
                       // Mic function
                     },
-                    child: Icon(Icons.mic),
-                    mini: true,
-                    backgroundColor: Color(0xFFE1CDB5), // Color E1CDB5
-                    shape: CircleBorder(),
+                    icon: Icon(Icons.mic),
+                    iconSize: 22,
+                    // mini: true,
                   ),
                 ),
+                )
               ],
             ),
           ),

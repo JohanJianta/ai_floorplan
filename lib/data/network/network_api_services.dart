@@ -11,7 +11,7 @@ class NetworkApiServices implements BaseApiServices {
   @override
   Future getGetApiResponse(String endpoint) async {
     dynamic responseJson;
-       try {
+    try {
       final response = await http.get(Uri.parse(Const.baseUrl + endpoint), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': Const.auth,

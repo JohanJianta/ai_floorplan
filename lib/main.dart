@@ -10,7 +10,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-    const MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +21,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const GalleryPage(title: 'Gallery'),
       initialRoute: '/splash', // Tentukan rute awal sebagai splash screen
       routes: {
         '/splash': (context) => SplashScreen(), // Rute untuk splash screen
         '/home': (context) => HomeScreen(), // Rute untuk home screen
         '/gallery': (context) =>
-            GalleryPage(title: 'Gallery'), // Rute untuk gallery page
+        GalleryPage(title: 'Gallery'), // Rute untuk gallery page
         '/login': (context) => LoginPage(), // Rute untuk home screen
         '/register': (context) => RegisterPage(), // Rute untuk home screen
       },

@@ -55,7 +55,7 @@ class _GalleryPageState extends State<GalleryPage> {
               );
             case Status.error:
               var snackBar = SnackBar(
-                 content: Text(value.floorplanList.message.toString(), style: TextStyle(color: widget.secondaryColor)),
+                content: Text(value.floorplanList.message.toString(), style: TextStyle(color: widget.secondaryColor)),
               );
               WidgetsBinding.instance.addPostFrameCallback((_) => ScaffoldMessenger.of(context).showSnackBar(snackBar));
               return Align(

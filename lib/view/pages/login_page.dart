@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ai_floorplan_test/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart'; // Updated package name
 import 'package:http/http.dart' as http;
@@ -13,7 +14,7 @@ class LoginPage extends StatelessWidget {
     final String password = passwordController.text;
 
     final response = await http.post(
-      Uri.parse('http://localhost:8080/api/v1/login'),
+      Uri.parse('${Const.baseUrl}/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
