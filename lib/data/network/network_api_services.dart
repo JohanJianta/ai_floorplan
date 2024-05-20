@@ -18,7 +18,7 @@ class NetworkApiServices implements BaseApiServices {
       });
       responseJson = returnResponse(response);
     } on SocketException {
-      throw NoInternetException('');
+      throw NoInternetException('Pastikan anda terhubung ke internet');
     } on TimeoutException {
       throw FetchDataException('Network request timed out');
     }
@@ -27,13 +27,44 @@ class NetworkApiServices implements BaseApiServices {
   }
 
   @override
-  Future getPostApiResponse(String url, data) {
+  Future getPostApiResponse(String endpoint, data) {
     throw UnimplementedError();
   }
 
   @override
-  Future getDeleteApiResponse(String url, data) {
-    throw UnimplementedError();
+  Future getPutApiResponse(String endpoint, data) async {
+    dynamic responseJson;
+    try {
+      final response = await http.put(Uri.parse(Const.baseUrl + endpoint), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': Const.auth,
+      });
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw NoInternetException('Pastikan anda terhubung ke internet');
+    } on TimeoutException {
+      throw FetchDataException('Network request timed out');
+    }
+
+    return responseJson;
+  }
+
+  @override
+  Future getDeleteApiResponse(String endpoint) async {
+    dynamic responseJson;
+    try {
+      final response = await http.delete(Uri.parse(Const.baseUrl + endpoint), headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': Const.auth,
+      });
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw NoInternetException('Pastikan anda terhubung ke internet');
+    } on TimeoutException {
+      throw FetchDataException('Network request timed out');
+    }
+
+    return responseJson;
   }
 
   dynamic returnResponse(http.Response response) {
@@ -49,7 +80,7 @@ class NetworkApiServices implements BaseApiServices {
       case 403:
         throw ForbiddenException(responseJson['messages'][0]);
       case 404:
-        throw UnauthorizedException(responseJson['messages'][0]);
+        throw NotFoundException(responseJson['messages'][0]);
       case 500:
       default:
         throw FetchDataException('Error occured while communicating with server');

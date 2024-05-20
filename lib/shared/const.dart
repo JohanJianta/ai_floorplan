@@ -1,7 +1,8 @@
 part of 'shared.dart';
 
 class Const {
-  static String baseUrl = 'http://192.168.91.92:8080/api/v1';
-  static String auth = 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0ZXIyQGVtYWlsLmNvbSIsImlhdCI6MTcxNDQzNzUxOSwiZXhwIjoxNzE0NTIzOTE5fQ.U3toGqSz_hJ1wjmWawPoWvAfIM76vIKRzc7aCVPb3ZG2GzsJWbJmEQNCADV6CVOY';
-  static int userId = 2;
+  // static String baseUrl = 'http://192.168.1.2:8080/api/v1';
+  static String baseUrl = 'http://10.1.70.49:8080/api/v1';
+  static String auth = 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0ZXIxQGVtYWlsLmNvbSIsImlhdCI6MTcxNTYyNjU2MCwiZXhwIjoxNzE1NzEyOTYwfQ.3gQW_WmebiVnRqLUizWkcFdLEbcic90FV5ictIjOfRETNOVJQTXb00NJRyAp36Xc';
+  static int userId = 1;
 }
