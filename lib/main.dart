@@ -1,7 +1,4 @@
-import 'package:ai_floorplan_test/view/pages/home_page.dart';
-import 'package:ai_floorplan_test/view/pages/login_page.dart';
 import 'package:ai_floorplan_test/view/pages/pages.dart';
-import 'package:ai_floorplan_test/view/pages/register_page.dart';
 import 'package:ai_floorplan_test/view/pages/splashscreen_page.dart';
 import 'package:flutter/material.dart';
 

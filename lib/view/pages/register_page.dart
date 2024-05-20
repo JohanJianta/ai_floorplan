@@ -1,9 +1,4 @@
-import 'dart:convert';
-import 'package:ai_floorplan_test/shared/shared.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
-import 'login_page.dart'; // Import halaman login
+part of 'pages.dart';
 
 class RegisterPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();

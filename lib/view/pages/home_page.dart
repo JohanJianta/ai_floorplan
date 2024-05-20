@@ -1,6 +1,5 @@
-import 'package:ai_floorplan_test/view/pages/hamburger_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+part of 'pages.dart';
+
 
 class HomeScreen extends StatefulWidget {
   @override
