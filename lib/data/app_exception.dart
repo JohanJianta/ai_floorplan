@@ -11,8 +11,7 @@ class AppException implements Exception {
 }
 
 class FetchDataException extends AppException {
-  FetchDataException([String? message])
-      : super(message, 'Error during communication');
+  FetchDataException([String? message]) : super(message, 'Error during communication');
 }
 
 class BadRequestException extends AppException {
@@ -20,8 +19,7 @@ class BadRequestException extends AppException {
 }
 
 class UnauthorizedException extends AppException {
-  UnauthorizedException([String? message])
-      : super(message, 'Unauthorized request');
+  UnauthorizedException([String? message])  : super(message, 'Unauthorized request');
 }
 
 class ForbiddenException extends AppException {
@@ -29,11 +27,10 @@ class ForbiddenException extends AppException {
 }
 
 class NotFoundException extends AppException {
-  NotFoundException([String? message])
-      : super(message, 'Requested data not found');
+  NotFoundException([String? message]) : super(message, 'Requested data not found');
 }
 
 class NoInternetException extends AppException {
-  NoInternetException([String? message])
-      : super(message, 'No internet connection');
+  NoInternetException([String? message]) : super(message, 'No internet connection');
 }
+  

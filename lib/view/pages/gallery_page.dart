@@ -28,9 +28,7 @@ class _GalleryPageState extends State<GalleryPage> {
       backgroundColor: widget.primaryColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Text(widget.title,
-            style: TextStyle(
-                color: widget.secondaryColor, fontWeight: FontWeight.w600)),
+        title: Text(widget.title, style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w600)),
         leading: IconButton(
           onPressed: () {
             // TODO: implement onPressed back button
@@ -57,22 +55,17 @@ class _GalleryPageState extends State<GalleryPage> {
               );
             case Status.error:
               var snackBar = SnackBar(
-                content: Text(value.floorplanList.message.toString(),
-                    style: TextStyle(color: widget.secondaryColor)),
+                 content: Text(value.floorplanList.message.toString(), style: TextStyle(color: widget.secondaryColor)),
               );
-              WidgetsBinding.instance.addPostFrameCallback(
-                  (_) => ScaffoldMessenger.of(context).showSnackBar(snackBar));
+              WidgetsBinding.instance.addPostFrameCallback((_) => ScaffoldMessenger.of(context).showSnackBar(snackBar));
               return Align(
                 alignment: Alignment.center,
                 child: ElevatedButton(
                   onPressed: () {
                     // TODO: implement onPressed back button
                   },
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(widget.tertiaryColor)),
-                  child: Text('Kembali ke Homepage',
-                      style: TextStyle(color: widget.secondaryColor)),
+                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(widget.tertiaryColor)),
+                  child: Text('Kembali ke Homepage', style: TextStyle(color: widget.secondaryColor)),
                 ),
               );
             case Status.completed:

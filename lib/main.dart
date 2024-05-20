@@ -6,18 +6,22 @@ import 'package:ai_floorplan_test/view/pages/splashscreen_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+    const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Menonaktifkan banner debug
-      title: 'Splash Screen',
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
+      home: const GalleryPage(title: 'Gallery'),
       initialRoute: '/splash', // Tentukan rute awal sebagai splash screen
       routes: {
         '/splash': (context) => SplashScreen(), // Rute untuk splash screen

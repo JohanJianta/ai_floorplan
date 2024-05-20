@@ -11,9 +11,8 @@ class NetworkApiServices implements BaseApiServices {
   @override
   Future getGetApiResponse(String endpoint) async {
     dynamic responseJson;
-    try {
-      final response = await http
-          .get(Uri.parse(Const.baseUrl + endpoint), headers: <String, String>{
+       try {
+      final response = await http.get(Uri.parse(Const.baseUrl + endpoint), headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': Const.auth,
       });
@@ -53,8 +52,7 @@ class NetworkApiServices implements BaseApiServices {
         throw UnauthorizedException(responseJson['messages'][0]);
       case 500:
       default:
-        throw FetchDataException(
-            'Error occured while communicating with server');
+        throw FetchDataException('Error occured while communicating with server');
     }
   }
 }
