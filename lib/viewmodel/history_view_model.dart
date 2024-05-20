@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:ai_floorplan_test/data/response/api_response.dart';
 import 'package:ai_floorplan_test/model/floorplan.dart';
 import 'package:ai_floorplan_test/model/histories/histories.dart';

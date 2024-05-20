@@ -40,6 +40,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF222831),
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -53,8 +54,8 @@ class LoginPage extends StatelessWidget {
                   // Logo
                   SvgPicture.asset(
                     'lib/assets/logo.svg',
-                    width: 100,
-                    height: 100,
+                    width: 80,
+                    height: 80,
                   ),
                   SizedBox(height: 20),
                   // Text "Login Page"
@@ -62,7 +63,7 @@ class LoginPage extends StatelessWidget {
                     'Login Page',
                     style: TextStyle(
                       color: Color(0xFFE1CDB5),
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -77,17 +78,17 @@ class LoginPage extends StatelessWidget {
                       filled: true,
                       fillColor: Colors.grey[800],
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
                       contentPadding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 16,
+                        horizontal: 16,
+                        vertical: 12,
                       ),
                       prefixIcon: Icon(Icons.email, color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 16),
                   // Password Input Field
                   TextFormField(
                     controller: passwordController,
@@ -99,17 +100,17 @@ class LoginPage extends StatelessWidget {
                       filled: true,
                       fillColor: Colors.grey[800],
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
                       contentPadding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 16,
+                        horizontal: 16,
+                        vertical: 12,
                       ),
                       prefixIcon: Icon(Icons.lock, color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 16),
                   // Sign In Button
                   SizedBox(
                     width: double.infinity,
@@ -120,22 +121,22 @@ class LoginPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF00ADB5),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
                         child: Text(
                           'Sign In',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 16),
                   // Divider and "Continue as a guest" Button
                   Row(
                     children: [
@@ -160,7 +161,7 @@ class LoginPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 16),
                   // Continue as a guest Button
                   TextButton(
                     onPressed: () {
