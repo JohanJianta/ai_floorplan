@@ -10,3 +10,6 @@ import 'package:provider/provider.dart';
 
 part 'gallery_page.dart';
 part 'trashbin_page.dart';
+
+
+

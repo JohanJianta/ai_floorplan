@@ -1,4 +1,8 @@
+import 'package:ai_floorplan_test/view/pages/home_page.dart';
+import 'package:ai_floorplan_test/view/pages/login_page.dart';
 import 'package:ai_floorplan_test/view/pages/pages.dart';
+import 'package:ai_floorplan_test/view/pages/register_page.dart';
+import 'package:ai_floorplan_test/view/pages/splashscreen_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,32 +21,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/splash', // Tentukan rute awal sebagai splash screen
       routes: {
-        '/': (context) => Builder(
-              builder: (context) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/gallery');
-                      },
-                      child: const Text('Go to Gallery'),
-                    ),
-                    const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/trashbin');
-                      },
-                      child: const Text('Go to Trash Bin'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        '/gallery': (context) => const GalleryPage(title: 'Gallery'),
-        '/trashbin': (context) => const TrashbinPage(title: 'Trash Bin'),
+        '/splash': (context) => SplashScreen(), // Rute untuk splash screen
+        '/home': (context) => HomeScreen(), // Rute untuk home screen
+        '/gallery': (context) => const GalleryPage(title: 'Gallery'), // Rute untuk gallery page
+        '/trashbin': (context) => const TrashbinPage(title: 'Trash Bin'), // Rute untuk trashbin page
+        '/login': (context) => LoginPage(), // Rute untuk home screen
+        '/register': (context) => RegisterPage(), // Rute untuk home screen
       },
     );
   }
