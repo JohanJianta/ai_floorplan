@@ -23,10 +23,6 @@ abstract class CardBase extends StatefulWidget {
 }
 
 abstract class BaseCardState<T extends CardBase> extends State<T> {
-  final String _url = 'https://foyr.com/learn/wp-content/uploads/2021/12/best-floor-plan-apps-1.jpg';
-  // final String _url = 'https://medialibrarycfo.entrata.com/4104/MLv3/4/22/2023/04/07/092045/643034cd565304.45217433746.png';
-  // final Image _image = Image.memory(base64Decode(encodedImage), fit: BoxFit.fill);
-
   late bool _isSelected;
   late double _maskOpacity;
 

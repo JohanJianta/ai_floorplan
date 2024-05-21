@@ -1,52 +1,38 @@
 part of 'pages.dart';
 
 class RegisterPage extends StatelessWidget {
+  final UserRepository _userRepo = UserRepository();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  Future<void> RegisterUser(BuildContext context) async {
-    final String email = emailController.text;
-    final String password = passwordController.text;
+  RegisterPage({super.key});
 
+  void _showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
+
+  void handleRegister(BuildContext context) async {
     try {
-      final response = await http.post(
-        Uri.parse('${Const.baseUrl}/register'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'email': email,
-          'password': password,
-        }),
-      );
+      final String email = emailController.text;
+      final String password = passwordController.text;
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      final data = User(email: email, password: password);
 
-      if (response.statusCode == 201) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => LoginPage(),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Register gagal')),
-        );
-      }
+      String message = await _userRepo.register(data);
+
+      _showSnackbar(context, message);
+
+      Navigator.of(context).pushReplacementNamed('/login');
     } catch (e) {
-      // Print pesan kesalahan jika terjadi kesalahan dalam proses registrasi
-      print('Error during registration: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error during registration')),
-      );
+      _showSnackbar(context, e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF222831),
+      backgroundColor: const Color(0xFF222831),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -61,8 +47,8 @@ class RegisterPage extends StatelessWidget {
                     width: 80,
                     height: 80,
                   ),
-                  SizedBox(height: 20),
-                  Text(
+                  const SizedBox(height: 20),
+                  const Text(
                     'Register Page',
                     style: TextStyle(
                       color: Color(0xFFE1CDB5),
@@ -70,63 +56,61 @@ class RegisterPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 30),
-                TextFormField(
+                  const SizedBox(height: 30),
+                  TextFormField(
                     controller: emailController,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: const TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.grey[800],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      prefixIcon: Icon(Icons.email, color: Colors.white),
+                      prefixIcon: const Icon(Icons.email, color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Password Input Field
                   TextFormField(
                     controller: passwordController,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: const TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.grey[800],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      prefixIcon: const Icon(Icons.lock, color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        RegisterUser(context);
-                      },
+                      onPressed: () => handleRegister(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF00ADB5),
+                        backgroundColor: const Color(0xFF00ADB5),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
                         child: Text(
                           'Register',
                           style: TextStyle(
@@ -137,17 +121,13 @@ class RegisterPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
                       // Pindah ke halaman login jika sudah punya akun
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => LoginPage(),
-                        ),
-                      );
+                      Navigator.of(context).pushReplacementNamed('/login');
                     },
-                    child: Text(
+                    child: const Text(
                       'Already have an account? Login',
                       style: TextStyle(
                         color: Colors.white,
@@ -155,12 +135,15 @@ class RegisterPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
-                      // Tambahkan logika untuk "Continue as a guest" di sini
+                      // TODO: Tambahkan logika untuk "Continue as a guest" di sini
+                      Const.userId = 0;
+                      Const.auth = '';
+                      Navigator.of(context).pushReplacementNamed('/home');
                     },
-                    child: Text(
+                    child: const Text(
                       'Continue as a guest',
                       style: TextStyle(
                         color: Colors.white,

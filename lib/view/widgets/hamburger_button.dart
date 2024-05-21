@@ -1,7 +1,4 @@
-import 'package:ai_floorplan_test/data/response/status.dart';
-import 'package:ai_floorplan_test/viewmodel/history_view_model.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+part of 'widgets.dart';
 
 class HamburgerButton extends StatefulWidget {
   const HamburgerButton({Key? key}) : super(key: key);
@@ -35,35 +32,33 @@ class _HamburgerButtonState extends State<HamburgerButton> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Color(0xFF393E46), // Drawer background color
-        child: SingleChildScrollView( // Use SingleChildScrollView
-          child: Column( // Wrap the entire content with Column
+        color: const Color(0xFF393E46), // Drawer background color
+        child: SingleChildScrollView(
+          // Use SingleChildScrollView
+          child: Column(
+            // Wrap the entire content with Column
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               ListTile(
-                title: Text(
-                  'Gallery',
-                  style: TextStyle(color: Colors.white),
-                ),
+                title: const Text('Gallery', style: TextStyle(color: Colors.white)),
                 onTap: () {
-                  // Action when Gallery is tapped
+                  // TODO: Action when Gallery is tapped
+                  Navigator.of(context).pushNamed('/gallery');
                 },
               ),
               ListTile(
-                title: Text(
-                  'Trash Bin',
-                  style: TextStyle(color: Colors.white),
-                ),
+                title: const Text('Trash Bin', style: TextStyle(color: Colors.white)),
                 onTap: () {
-                  // Action when Trash Bin is tapped
+                  // TODO: Action when Trash Bin is tapped
+                  Navigator.of(context).pushNamed('/trashbin');
                 },
               ),
               ExpansionTile(
-                title: Text(
+                title: const Text(
                   'History',
                   style: TextStyle(color: Colors.white),
                 ),
-                backgroundColor: Color(0xFF393E46),
+                backgroundColor: const Color(0xFF393E46),
                 // Load history when expanded
                 onExpansionChanged: loadHistory,
                 children: [
@@ -71,19 +66,19 @@ class _HamburgerButtonState extends State<HamburgerButton> {
                     create: (BuildContext context) => historyViewModel,
                     child: Consumer<HistoryViewModel>(
                       builder: (context, value, _) {
-                        switch (value.HistoryList.status) {
+                        switch (value.historyList.status) {
                           case Status.loading:
-                            return Center(
+                            return const Center(
                               child: CircularProgressIndicator(),
                             );
                           case Status.error:
                             var snackBar = SnackBar(
                               content: Text(
-                                value.HistoryList.message.toString(),
-                                style: TextStyle(color: Colors.black),
+                                value.historyList.message.toString(),
+                                style: const TextStyle(color: Colors.black),
                               ),
                             );
-                            WidgetsBinding.instance!.addPostFrameCallback(
+                            WidgetsBinding.instance.addPostFrameCallback(
                               (_) => ScaffoldMessenger.of(context).showSnackBar(snackBar),
                             );
                             return Container();
@@ -92,13 +87,13 @@ class _HamburgerButtonState extends State<HamburgerButton> {
                               margin: const EdgeInsets.all(16),
                               child: ListView.builder(
                                 shrinkWrap: true, // Ensure ListView takes only necessary space
-                                physics: NeverScrollableScrollPhysics(), // Disable ListView scrolling
-                                itemCount: value.HistoryList.data?.length ?? 0,
+                                physics: const NeverScrollableScrollPhysics(), // Disable ListView scrolling
+                                itemCount: value.historyList.data?.length ?? 0,
                                 itemBuilder: (context, index) {
                                   return ListTile(
                                     title: Text(
-                                      value.HistoryList.data![index].chat!,
-                                      style: TextStyle(color: Colors.white),
+                                      value.historyList.data![index].chat!,
+                                      style: const TextStyle(color: Colors.white),
                                     ),
                                     onTap: () {
                                       // Action when history item is tapped
@@ -119,14 +114,14 @@ class _HamburgerButtonState extends State<HamburgerButton> {
               ),
               // Setting Item
               ExpansionTile(
-                title: Text(
+                title: const Text(
                   'Setting',
                   style: TextStyle(color: Colors.white),
                 ),
-                backgroundColor: Color(0xFF393E46),
+                backgroundColor: const Color(0xFF393E46),
                 children: <Widget>[
                   ListTile(
-                    title: Text(
+                    title: const Text(
                       'Change Email',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -136,7 +131,7 @@ class _HamburgerButtonState extends State<HamburgerButton> {
                     },
                   ),
                   ListTile(
-                    title: Text(
+                    title: const Text(
                       'Change Password',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -146,7 +141,7 @@ class _HamburgerButtonState extends State<HamburgerButton> {
                     },
                   ),
                   ListTile(
-                    title: Text(
+                    title: const Text(
                       'Log Out',
                       style: TextStyle(color: Colors.white),
                     ),

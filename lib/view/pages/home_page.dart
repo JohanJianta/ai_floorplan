@@ -1,9 +1,10 @@
 part of 'pages.dart';
 
-
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -13,20 +14,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: scaffoldkey,
       appBar: AppBar(
-        backgroundColor: Color(0xFF222831),
+        backgroundColor: const Color(0xFF222831),
         leading: IconButton(
-          icon: Icon(Icons.menu, color: Color(0xFFE1CDB5),), // Icon hamburger
+          icon: const Icon(
+            Icons.menu,
+            color: Color(0xFFE1CDB5),
+          ), // Icon hamburger
           onPressed: () {
             scaffoldkey.currentState!.openDrawer(); // Buka drawer saat ditekan
           },
         ),
-        title: Text(
+        title: const Text(
           'AI Floorplan',
           style: TextStyle(color: Color(0xFFE1CDB5)), // Change title text color
         ),
       ),
-      backgroundColor: Color(0xFF222831),
-      drawer: HamburgerButton(), //Drawer
+      backgroundColor: const Color(0xFF222831),
+      drawer: const HamburgerButton(), //Drawer
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -48,12 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                   width: 270,
                   height: 30,
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.grey[200],
                   ),
-                  child: TextField(
+                  child: const TextField(
                     style: TextStyle(
                       fontSize: 12,
                       color: Color(0xFFE1CDB5), // Color E1CDB5
@@ -64,35 +68,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 ClipOval(
-                  child:Container(
-                  color:Color(0xFFE1CDB5) ,
-                  width: 37,
-                  height: 37,
-                  child: IconButton(
-                    onPressed: () {
-                    },
-                    icon: Icon(Icons.camera_alt),
-                    iconSize: 22,
+                  child: Container(
+                    color: const Color(0xFFE1CDB5),
+                    width: 37,
+                    height: 37,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.camera_alt),
+                      iconSize: 22,
+                    ),
                   ),
                 ),
-              ),  
-                SizedBox(width: 16),
-                ClipOval(child: 
-                 Container(
-                  color:Color(0xFFE1CDB5) ,
-                  width: 37,
-                  height: 37,
-                  child: IconButton(
-                    onPressed: () {
-                      // Mic function
-                    },
-                    icon: Icon(Icons.mic),
-                    iconSize: 22,
-                    // mini: true,
+                const SizedBox(width: 16),
+                ClipOval(
+                  child: Container(
+                    color: const Color(0xFFE1CDB5),
+                    width: 37,
+                    height: 37,
+                    child: IconButton(
+                      onPressed: () {
+                        // Mic function
+                      },
+                      icon: const Icon(Icons.mic),
+                      iconSize: 22,
+                      // mini: true,
+                    ),
                   ),
-                ),
                 )
               ],
             ),

@@ -27,8 +27,28 @@ class NetworkApiServices implements BaseApiServices {
   }
 
   @override
-  Future getPostApiResponse(String endpoint, data) {
-    throw UnimplementedError();
+  Future getPostApiResponse(String endpoint, data) async {
+    PostResponse responseJson;
+    try {
+      final response = await http.post(
+        Uri.parse(Const.baseUrl + endpoint),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': Const.auth,
+        },
+        body: jsonEncode(data),
+      );
+      responseJson = PostResponse(
+        body: returnResponse(response),
+        headers: response.headers,
+      );
+    } on SocketException {
+      throw NoInternetException('Pastikan anda terhubung ke internet');
+    } on TimeoutException {
+      throw FetchDataException('Network request timed out');
+    }
+
+    return responseJson;
   }
 
   @override
@@ -72,6 +92,7 @@ class NetworkApiServices implements BaseApiServices {
 
     switch (response.statusCode) {
       case 200:
+      case 201:
         return responseJson;
       case 400:
         throw BadRequestException(responseJson['messages'].toString());
@@ -81,9 +102,18 @@ class NetworkApiServices implements BaseApiServices {
         throw ForbiddenException(responseJson['messages'][0]);
       case 404:
         throw NotFoundException(responseJson['messages'][0]);
+      case 409:
+        throw BadRequestException(responseJson['messages'][0]);
       case 500:
       default:
         throw FetchDataException('Error occured while communicating with server');
     }
   }
+}
+
+class PostResponse {
+  final dynamic body;
+  final Map<String, String> headers;
+
+  PostResponse({required this.body, this.headers = const {}});
 }

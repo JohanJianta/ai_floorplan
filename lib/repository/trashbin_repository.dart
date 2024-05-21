@@ -1,11 +1,9 @@
 part of 'repository.dart';
 
 class TrashbinRepository {
-  final _apiServices = NetworkApiServices();
-
   Future<List<Floorplan>> fetchFloorplanList() async {
     try {
-      dynamic response = await _apiServices.getGetApiResponse('/user/${Const.userId}/trashbin');
+      dynamic response = await apiServices.getGetApiResponse('/user/${Const.userId}/trashbin');
 
       List<Floorplan> result = [];
 
@@ -21,7 +19,7 @@ class TrashbinRepository {
 
   Future<String> restoreFloorplans(Set<int> floorplanIds) async {
     try {
-      dynamic response = await _apiServices.getPutApiResponse('/trashbin?floorplanIds=${floorplanIds.join(',')}', null);
+      dynamic response = await apiServices.getPutApiResponse('/trashbin?floorplanIds=${floorplanIds.join(',')}', null);
 
       String result = '';
 
@@ -37,7 +35,7 @@ class TrashbinRepository {
 
   Future<String> permanentDeleteFloorplans(Set<int> floorplanIds) async {
     try {
-      dynamic response = await _apiServices.getDeleteApiResponse('/trashbin?floorplanIds=${floorplanIds.join(',')}');
+      dynamic response = await apiServices.getDeleteApiResponse('/trashbin?floorplanIds=${floorplanIds.join(',')}');
 
       String result = '';
 
