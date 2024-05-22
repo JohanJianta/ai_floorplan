@@ -137,15 +137,18 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                   Container(
                     height: 120,
                     margin: const EdgeInsets.symmetric(vertical: 24),
+                    padding: const EdgeInsets.all(12),
                     color: widget.tertiaryColor,
                     alignment: Alignment.center,
-                    child: Text(
-                      '${widget.floorplan.prompt}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: widget.secondaryColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
+                    child: SingleChildScrollView(
+                      child: Text(
+                        '${widget.floorplan.prompt}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: widget.secondaryColor,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                   ),

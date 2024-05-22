@@ -17,9 +17,7 @@ class RegisterPage extends StatelessWidget {
       final String email = emailController.text;
       final String password = passwordController.text;
 
-      final data = User(email: email, password: password);
-
-      String message = await _userRepo.register(data);
+      String message = await _userRepo.register(email, password);
 
       _showSnackbar(context, message);
 

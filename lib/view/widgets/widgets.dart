@@ -10,4 +10,5 @@ import 'package:flutter/material.dart';
 part 'base_card.dart';
 part 'gallery_card.dart';
 part 'trashbin_card.dart';
-part 'hamburger_button.dart';
+part 'home_page_card.dart';
+part 'custom_drawer.dart';

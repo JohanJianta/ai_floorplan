@@ -1,3 +1,4 @@
+import 'package:ai_floorplan_test/model/chat.dart';
 import 'package:ai_floorplan_test/model/history.dart';
 import 'package:ai_floorplan_test/model/floorplan.dart';
 import 'package:ai_floorplan_test/repository/repository.dart';
@@ -8,3 +9,4 @@ import 'package:intl/intl.dart';
 part 'gallery_view_model.dart';
 part 'trashbin_view_model.dart';
 part 'history_view_model.dart';
+part 'chat_view_model.dart';

@@ -17,11 +17,10 @@ class LoginPage extends StatelessWidget {
       final String email = emailController.text;
       final String password = passwordController.text;
 
-      final data = User(email: email, password: password);
+      await _userRepo.login(email, password);
 
-      String message = await _userRepo.login(data);
-
-      _showSnackbar(context, message);
+      // String message = await _userRepo.login(data);
+      // _showSnackbar(context, message);
 
       Navigator.of(context).pushReplacementNamed('/home');
     } catch (e) {

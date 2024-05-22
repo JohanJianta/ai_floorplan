@@ -1,7 +1,8 @@
 part of 'repository.dart';
 
 class UserRepository {
-  Future<String> login(User user) async {
+  Future<String> login(String email, String password) async {
+    User user = User(email: email, password: password);
     try {
       PostResponse response = await apiServices.getPostApiResponse('/login', user.toJson());
 
@@ -20,7 +21,8 @@ class UserRepository {
     }
   }
 
-  Future<String> register(User user) async {
+  Future<String> register(String email, String password) async {
+    User user = User(email: email, password: password);
     try {
       PostResponse response = await apiServices.getPostApiResponse('/register', user.toJson());
 
