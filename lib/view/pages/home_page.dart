@@ -54,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFF222831),
       drawer: CustomDrawer(onChatgroupSelected: chatViewModel.updateChatgroupId), // Drawer
       body: _buildBody(),
-      bottomNavigationBar: _buildInputRow(),
     );
   }
 
@@ -66,12 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
         style: TextStyle(color: Color(0xFFE1CDB5), fontWeight: FontWeight.bold),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.menu, color: Color(0xFFE1CDB5), size: 28),
+        icon: const Icon(Icons.menu, color: Color(0xFFE1CDB5)),
         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.edit_square, color: Color(0xFFE1CDB5), size: 28),
+          icon: const Icon(Icons.edit_square, color: Color(0xFFE1CDB5)),
           onPressed: () => chatViewModel.updateChatgroupId(0),
         ),
       ],
@@ -87,13 +86,20 @@ class _HomeScreenState extends State<HomeScreen> {
           final data = value.response.data;
           final message = value.response.message;
 
-          if ({Status.loading, Status.error}.contains(status) && (data == null || data.isEmpty)) {
-            // Tampilkan indikator loading atau pesan error saja apabila belum ada data chat
-            return status == Status.loading ? _buildLoading() : _buildError(message.toString());
-          } else {
-            // Tampilkan data chat, kemudian tambahkan indikator loading atau pesan error tergantung status
-            return _buildChatList(data, {Status.loading, Status.error}.contains(status), message?.toString() ?? '');
-          }
+          return Column(
+            children: [
+              Expanded(
+                child: {Status.loading, Status.error}.contains(status) && (data == null || data.isEmpty)
+                    // Tampilkan indikator loading atau pesan error saja apabila belum ada data chat
+                    ? status == Status.loading
+                        ? _buildLoading()
+                        : _buildError(message.toString())
+                    // Tampilkan data chat apabila sudah ada, kemudian tambahkan indikator loading atau pesan error tergantung status
+                    : _buildChatList(data, {Status.loading, Status.error}.contains(status), message?.toString() ?? ''),
+              ),
+              _buildInputRow(),
+            ],
+          );
         },
       ),
     );
@@ -135,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: chats.length + (isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == chats.length) {
-            // Tampilkan pesan error apabila ada, atau indikator loading apabila sedang menunggu
+            // Tampilkan pesan error apabila terjadi error, atau indikator loading apabila sedang menunggu
             return errMsg.isNotEmpty ? _buildError(errMsg) : _buildLoading();
           } else {
             return _buildChat(chats[index]);
@@ -187,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildInputRow() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -224,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.black,
               ),
               decoration: const InputDecoration(
-                hintText: 'Enter your text here',
+                hintText: 'Masukkan kriteria floorplan anda',
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               ),
