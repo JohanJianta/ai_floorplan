@@ -1,24 +1,26 @@
 part of 'widgets.dart';
 
-class GalleryCard extends CardBase {
-  final Function(Floorplan) onDelete;
+class HomePageCard extends CardBase {
+  final Function(Floorplan) onSave;
 
-  const GalleryCard({
+  static void _defaultOnSelected(Floorplan fp) {}
+
+  const HomePageCard({
     super.key,
     required super.floorplan,
-    required super.selectionView,
-    required super.isSelected,
-    required super.secondaryColor,
-    required super.tertiaryColor,
-    required super.onSelected,
-    required this.onDelete,
+    required this.onSave,
+    super.selectionView = false,
+    super.isSelected = false,
+    super.secondaryColor = const Color(0xFFE1CDB5),
+    super.tertiaryColor = const Color(0xFF31363F),
+    super.onSelected = _defaultOnSelected,
   });
 
   @override
-  BaseCardState<GalleryCard> createState() => _GalleryCardState();
+  BaseCardState<HomePageCard> createState() => _HomePageCardState();
 }
 
-class _GalleryCardState extends BaseCardState<GalleryCard> {
+class _HomePageCardState extends BaseCardState<HomePageCard> {
   @override
   Widget addThumbnailProperty() {
     return const SizedBox.shrink();
@@ -38,8 +40,10 @@ class _GalleryCardState extends BaseCardState<GalleryCard> {
       ),
       const SizedBox(width: 16),
       buildActionButton(
-        icon: Icons.delete_sharp,
-        onPressed: () => widget.onDelete(widget.floorplan),
+        icon: Icons.bookmark_sharp,
+        onPressed: () {
+          // TODO: Save floorplan to gallery
+        },
       ),
     ];
   }

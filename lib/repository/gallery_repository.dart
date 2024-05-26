@@ -1,11 +1,9 @@
 part of 'repository.dart';
 
 class GalleryRepository {
-  final _apiServices = NetworkApiServices();
-
   Future<List<Floorplan>> fetchFloorplanList() async {
     try {
-      dynamic response = await _apiServices.getGetApiResponse('/user/${Const.userId}/gallery');
+      dynamic response = await apiServices.getGetApiResponse('/user/${Const.userId}/gallery');
 
       List<Floorplan> result = [];
 
@@ -21,7 +19,7 @@ class GalleryRepository {
 
   Future<String> deleteFloorplans(Set<int> floorplanIds) async {
     try {
-      dynamic response = await _apiServices.getDeleteApiResponse('/gallery?floorplanIds=${floorplanIds.join(',')}');
+      dynamic response = await apiServices.getDeleteApiResponse('/gallery?floorplanIds=${floorplanIds.join(',')}');
 
       String result = '';
 

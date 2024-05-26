@@ -1,18 +1,16 @@
 import 'package:equatable/equatable.dart';
 
-class Histories extends Equatable {
+class History extends Equatable {
   final int? chatgroupId;
   final String? chat;
   final DateTime? createTime;
 
-  const Histories({this.chatgroupId, this.chat, this.createTime});
+  const History({this.chatgroupId, this.chat, this.createTime});
 
-  factory Histories.fromJson(Map<String, dynamic> json) => Histories(
+  factory History.fromJson(Map<String, dynamic> json) => History(
         chatgroupId: json['chatgroupId'] as int?,
         chat: json['chat'] as String?,
-        createTime: json['createTime'] == null
-            ? null
-            : DateTime.parse(json['createTime'] as String),
+        createTime: json['createTime'] == null ? null : DateTime.parse(json['createTime'] as String),
       );
 
   Map<String, dynamic> toJson() => {

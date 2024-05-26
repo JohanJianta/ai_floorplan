@@ -1,15 +1,11 @@
-import 'package:ai_floorplan_test/data/response/api_response.dart';
-import 'package:ai_floorplan_test/model/floorplan.dart';
-import 'package:ai_floorplan_test/model/histories/histories.dart';
-import 'package:ai_floorplan_test/repository/history_repository.dart';
-import 'package:flutter/material.dart';
+part of 'view_model.dart';
 
 class HistoryViewModel with ChangeNotifier {
   final _historyRepo = HistoryRepository();
-  ApiResponse<List<Histories>> HistoryList = ApiResponse.loading();
+  ApiResponse<List<History>> historyList = ApiResponse.loading();
 
-  sethistoryList(ApiResponse<List<Histories>> response) {
-    HistoryList = response;
+  sethistoryList(ApiResponse<List<History>> response) {
+    historyList = response;
     notifyListeners();
   }
 

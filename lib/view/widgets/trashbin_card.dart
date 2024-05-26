@@ -17,10 +17,10 @@ class TrashbinCard extends CardBase {
   });
 
   @override
-  BaseCardState<TrashbinCard> createState() => _CardTrashbinState();
+  BaseCardState<TrashbinCard> createState() => _TrashbinCardState();
 }
 
-class _CardTrashbinState extends BaseCardState<TrashbinCard> {
+class _TrashbinCardState extends BaseCardState<TrashbinCard> {
   @override
   Widget addThumbnailProperty() {
     return Align(

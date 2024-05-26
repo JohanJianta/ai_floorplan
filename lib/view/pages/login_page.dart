@@ -1,41 +1,37 @@
 part of 'pages.dart';
 
 class LoginPage extends StatelessWidget {
+  final UserRepository _userRepo = UserRepository();
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  Future<void> loginUser(BuildContext context) async {
-    final String email = emailController.text;
-    final String password = passwordController.text;
+  LoginPage({super.key});
 
-    final response = await http.post(
-      Uri.parse('${Const.baseUrl}/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-      }),
-    );
+  void _showSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
 
-    if (response.statusCode == 200) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => HomeScreen(),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login gagal')),
-      );
+  void handleLogin(BuildContext context) async {
+    try {
+      final String email = emailController.text;
+      final String password = passwordController.text;
+
+      await _userRepo.login(email, password);
+
+      // String message = await _userRepo.login(data);
+      // _showSnackbar(context, message);
+
+      Navigator.of(context).pushReplacementNamed('/home');
+    } catch (e) {
+      _showSnackbar(context, e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF222831),
+      backgroundColor: const Color(0xFF222831),
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Center(
@@ -46,16 +42,16 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Logo
                   SvgPicture.asset(
                     'lib/assets/logo.svg',
                     width: 80,
                     height: 80,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   // Text "Login Page"
-                  Text(
+                  const Text(
                     'Login Page',
                     style: TextStyle(
                       color: Color(0xFFE1CDB5),
@@ -63,65 +59,63 @@ class LoginPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   // Email Input Field
                   TextFormField(
                     controller: emailController,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: const TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.grey[800],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      prefixIcon: Icon(Icons.email, color: Colors.white),
+                      prefixIcon: const Icon(Icons.email, color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Password Input Field
                   TextFormField(
                     controller: passwordController,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: const TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.grey[800],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      prefixIcon: Icon(Icons.lock, color: Colors.white),
+                      prefixIcon: const Icon(Icons.lock, color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Sign In Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        loginUser(context);
-                      },
+                      onPressed: () => handleLogin(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF00ADB5),
+                        backgroundColor: const Color(0xFF00ADB5),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
                         child: Text(
                           'Sign In',
                           style: TextStyle(
@@ -132,9 +126,9 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Divider and "Continue as a guest" Button
-                  Row(
+                  const Row(
                     children: [
                       Expanded(
                         child: Divider(
@@ -143,7 +137,7 @@ class LoginPage extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           'or',
                           style: TextStyle(color: Colors.grey),
@@ -157,13 +151,16 @@ class LoginPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   // Continue as a guest Button
                   TextButton(
                     onPressed: () {
-                      // Add logic for "Continue as a guest" here
+                      // TODO: Add logic for "Continue as a guest" here
+                      Const.userId = 0;
+                      Const.auth = '';
+                      Navigator.of(context).pushReplacementNamed('/home');
                     },
-                    child: Text(
+                    child: const Text(
                       'Continue as a guest',
                       style: TextStyle(
                         color: Colors.white,
