@@ -38,13 +38,13 @@ class _HomePageCardState extends BaseCardState<HomePageCard> {
         icon: Icons.download_sharp,
         onPressed: () => Util.saveImage(context, widget.floorplan.imageData!),
       ),
-      const SizedBox(width: 16),
-      buildActionButton(
-        icon: Icons.bookmark_sharp,
-        onPressed: () {
-          // TODO: Save floorplan to gallery
-        },
-      ),
+      (Const.userId != 0 && Const.auth.isNotEmpty) ? const SizedBox(width: 16) : const SizedBox.shrink(),
+      (Const.userId != 0 && Const.auth.isNotEmpty)
+          ? buildActionButton(
+              icon: Icons.bookmark_sharp,
+              onPressed: () => widget.onSave(widget.floorplan),
+            )
+          : const SizedBox.shrink(),
     ];
   }
 }

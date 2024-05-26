@@ -28,6 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  void _showSnackbar(String message) {
+    if (Navigator.of(context).canPop() && mounted) {
+      Navigator.of(context).pop();
+    }
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -38,6 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     });
+  }
+
+  void _handleSaveFloorplan(Floorplan floorplan) async {
+    String message = await chatViewModel.saveToGallery(floorplan.floorplanId!);
+    _showSnackbar(message);
   }
 
   void _handleSendChat() async {
@@ -175,10 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: chatData.floorplans?.length ?? 0,
           itemBuilder: (context, index) {
             return HomePageCard(
-              floorplan: chatData.floorplans!.elementAt(index),
-              onSave: (floorplan) {
-                // TODO: Implement save functionality
-              },
+              floorplan: chatData.floorplans![index],
+              onSave: _handleSaveFloorplan,
             );
           },
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

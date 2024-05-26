@@ -33,4 +33,21 @@ class ChatRepository {
       rethrow;
     }
   }
+
+  Future<String> saveFloorplan(int floorplanId) async {
+    Map<String, dynamic> data = {"floorplanId": floorplanId, "userId": Const.userId};
+    try {
+      final response = await apiServices.getPostApiResponse('/gallery', data);
+
+      String result = '';
+
+      if (response.body['success']) {
+        result = response.body['messages'][0].toString();
+      }
+
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

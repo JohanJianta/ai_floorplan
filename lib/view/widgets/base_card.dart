@@ -23,7 +23,6 @@ abstract class CardBase extends StatefulWidget {
 }
 
 abstract class BaseCardState<T extends CardBase> extends State<T> {
-  final url = 'https://foyr.com/learn/wp-content/uploads/2021/12/best-floor-plan-apps-1.jpg';
   late bool _isSelected;
   late double _maskOpacity;
 
@@ -71,9 +70,8 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              // base64Decode(widget.floorplan.imageData!),
-              url,
+            Image.memory(
+              base64Decode(widget.floorplan.imageData!),
               fit: BoxFit.fill,
               gaplessPlayback: true,
               colorBlendMode: BlendMode.srcATop,
@@ -135,8 +133,7 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Image.memory(base64Decode(widget.floorplan.imageData!)),
-                  Image.network(url),
+                  Image.memory(base64Decode(widget.floorplan.imageData!)),
                   Container(
                     height: 150,
                     margin: const EdgeInsets.symmetric(vertical: 24),
