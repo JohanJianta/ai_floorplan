@@ -28,10 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
-  }
-
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -65,14 +61,20 @@ class _HomeScreenState extends State<HomeScreen> {
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: const Color(0xFF222831),
-      leading: IconButton(
-        icon: const Icon(Icons.menu, color: Color(0xFFE1CDB5)),
-        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-      ),
       title: const Text(
         'AI Floorplan',
         style: TextStyle(color: Color(0xFFE1CDB5), fontWeight: FontWeight.bold),
       ),
+      leading: IconButton(
+        icon: const Icon(Icons.menu, color: Color(0xFFE1CDB5), size: 28),
+        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.edit_square, color: Color(0xFFE1CDB5), size: 28),
+          onPressed: () => chatViewModel.updateChatgroupId(0),
+        ),
+      ],
     );
   }
 
@@ -133,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
         itemCount: chats.length + (isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == chats.length) {
+            // Tampilkan pesan error apabila ada, atau indikator loading apabila sedang menunggu
             return errMsg.isNotEmpty ? _buildError(errMsg) : _buildLoading();
           } else {
             return _buildChat(chats[index]);
