@@ -17,4 +17,19 @@ class HistoryViewModel with ChangeNotifier {
       sethistoryList(ApiResponse.error(error.toString()));
     });
   }
+
+  Future<String> removeHistory(int chatgroupId) async {
+    try {
+      String value = await _historyRepo.deleteHistory(chatgroupId);
+
+      // Hapus history dari daftar history
+      historyList.data?.removeWhere((history) => history.chatgroupId == chatgroupId);
+
+      notifyListeners();
+
+      return value;
+    } catch (error) {
+      rethrow;
+    }
+  }
 }

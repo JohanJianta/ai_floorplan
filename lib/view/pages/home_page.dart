@@ -46,13 +46,24 @@ class _HomeScreenState extends State<HomeScreen> {
     _chatController.clear();
   }
 
+  void _handleDeletedChatgroup(int chatgroupId) async {
+    if (chatgroupId != chatViewModel.currentChatgroupId) return;
+
+    // Reset homepage apabila sedang menampilkan data chatgroup yang sudah dihapus
+    chatViewModel.updateChatgroupId(0);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       backgroundColor: const Color(0xFF222831),
-      drawer: CustomDrawer(onChatgroupSelected: chatViewModel.updateChatgroupId), // Drawer
+      drawer: CustomDrawer(
+        onChatgroupSelected: chatViewModel.updateChatgroupId,
+        onChatgroupDeleted: _handleDeletedChatgroup,
+      ),
       body: _buildBody(),
     );
   }

@@ -1,9 +1,10 @@
 part of 'widgets.dart';
 
 class CustomDrawer extends StatefulWidget {
-  const CustomDrawer({Key? key, required this.onChatgroupSelected}) : super(key: key);
+  const CustomDrawer({super.key, required this.onChatgroupSelected, required this.onChatgroupDeleted});
 
   final Function(int) onChatgroupSelected;
+  final Function(int) onChatgroupDeleted;
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -11,6 +12,23 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   late HistoryViewModel historyViewModel;
+
+  void _handleRemoveHistory(int chatgroupId) async {
+    try {
+      bool isConfirmed = await _showAlertDialog();
+      if (!isConfirmed) return;
+
+      String message = await historyViewModel.removeHistory(chatgroupId);
+      widget.onChatgroupDeleted(chatgroupId);
+      _showSnackbar(message);
+    } catch (e) {
+      _showSnackbar(e.toString());
+    }
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
 
   @override
   void initState() {
@@ -108,7 +126,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       case Status.loading:
         return const Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
-          child: Center(child: CircularProgressIndicator()),
+          child: Center(child: CircularProgressIndicator(color: Color(0xFFE1CDB5))),
         );
       case Status.error:
         return Padding(
@@ -169,23 +187,88 @@ class _CustomDrawerState extends State<CustomDrawer> {
         physics: const ScrollPhysics(),
         itemCount: value.historyList.data!.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-            dense: true,
-            visualDensity: VisualDensity.compact,
-            title: Text(
-              value.historyList.data![index].chat!,
-              style: const TextStyle(color: Colors.white),
-              overflow: TextOverflow.ellipsis,
-            ),
-            onTap: () {
-              Navigator.pop(context);
-              widget.onChatgroupSelected(value.historyList.data![index].chatgroupId!);
+          return GestureDetector(
+            onLongPressStart: (details) {
+              // Tampilkan pop up menu untuk hapus history
+              _showPopupMenu(details.globalPosition, value.historyList.data![index].chatgroupId!);
             },
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              dense: true,
+              visualDensity: VisualDensity.compact,
+              title: Text(
+                value.historyList.data![index].chat!,
+                style: const TextStyle(color: Colors.white),
+                overflow: TextOverflow.ellipsis,
+              ),
+              onTap: () {
+                // Tutup drawer, kemudian tampilkan data chat di homepage
+                Navigator.pop(context);
+                widget.onChatgroupSelected(value.historyList.data![index].chatgroupId!);
+              },
+            ),
           );
         },
       ),
     );
+  }
+
+  void _showPopupMenu(Offset position, int chatgroupId) async {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    showMenu(
+      context: context,
+      color: const Color(0xFF393E46),
+      constraints: const BoxConstraints(maxWidth: 100),
+      position: RelativeRect.fromRect(
+        Rect.fromLTWH(position.dx, position.dy, 0, 0),
+        Offset.zero & overlay.size,
+      ),
+      items: [
+        PopupMenuItem<String>(
+          padding: const EdgeInsets.all(8),
+          child: const Row(
+            children: [
+              Icon(Icons.delete_sharp, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Delete', style: TextStyle(color: Colors.red)),
+            ],
+          ),
+          onTap: () => _handleRemoveHistory(chatgroupId),
+        ),
+      ],
+    );
+  }
+
+  Future<bool> _showAlertDialog() async {
+    Completer<bool> completer = Completer<bool>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: const Text("Apakah anda yakin ingin menghapus chatgroup ini?"),
+          actions: [
+            TextButton(
+              child: const Text("Batal"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                completer.complete(false);
+              },
+            ),
+            TextButton(
+              child: const Text("Lanjut"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                completer.complete(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    return completer.future;
   }
 
   Widget _buildSettingsItem({required String title, required VoidCallback onTapEvent}) {
