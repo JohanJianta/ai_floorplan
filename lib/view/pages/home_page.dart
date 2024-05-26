@@ -17,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     chatViewModel = ChatViewModel();
+    chatViewModel.addListener(_scrollToBottom);
     chatViewModel.fetchChatData();
   }
 
@@ -27,44 +28,38 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _handleSendChat() async {
+    if (_chatController.text.isEmpty) return;
+    await chatViewModel.postChat(_chatController.text.trim());
+    _chatController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       backgroundColor: const Color(0xFF222831),
-      drawer: CustomDrawer(onChatgroupSelected: _handleUpdateChatgroupId), // Drawer
+      drawer: CustomDrawer(onChatgroupSelected: chatViewModel.updateChatgroupId), // Drawer
       body: _buildBody(),
       bottomNavigationBar: _buildInputRow(),
     );
-  }
-
-  void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
-  }
-
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
-
-  void _handleUpdateChatgroupId(int newChatgroupId) {
-    chatViewModel.updateChatgroupId(newChatgroupId);
-    _scrollToBottom();
-  }
-
-  void _handleSendChat() async {
-    if (_chatController.text.isEmpty) {
-      return;
-    }
-    await chatViewModel.postChat(_chatController.text);
-    _chatController.clear();
-    _scrollToBottom();
   }
 
   AppBar _buildAppBar() {
@@ -86,16 +81,16 @@ class _HomeScreenState extends State<HomeScreen> {
       create: (context) => chatViewModel,
       child: Consumer<ChatViewModel>(
         builder: (context, value, _) {
-          switch (value.response.status) {
-            case Status.loading:
-              return _buildLoading();
-            case Status.error:
-              WidgetsBinding.instance.addPostFrameCallback((_) => _showSnackbar(value.response.message.toString()));
-              return _buildError();
-            case Status.completed:
-              return _buildChatList(value.response.data);
-            default:
-              return Container();
+          final status = value.response.status;
+          final data = value.response.data;
+          final message = value.response.message;
+
+          if ({Status.loading, Status.error}.contains(status) && (data == null || data.isEmpty)) {
+            // Tampilkan indikator loading atau pesan error saja apabila belum ada data chat
+            return status == Status.loading ? _buildLoading() : _buildError(message.toString());
+          } else {
+            // Tampilkan data chat, kemudian tambahkan indikator loading atau pesan error tergantung status
+            return _buildChatList(data, {Status.loading, Status.error}.contains(status), message?.toString() ?? '');
           }
         },
       ),
@@ -103,18 +98,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLoading() {
-    return const Center(
-      child: CircularProgressIndicator(color: Color(0xFFE1CDB5)),
+    return const Padding(
+      padding: EdgeInsets.only(top: 16, bottom: 30),
+      child: Center(
+        child: CircularProgressIndicator(color: Color(0xFFE1CDB5)),
+      ),
     );
   }
 
-  Widget _buildError() {
-    return const Center(
-      child: Text('Error occurred', style: TextStyle(color: Color(0xFFE1CDB5))),
+  Widget _buildError(String error) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 30),
+      child: Center(
+        child: Text(
+          error,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.red),
+        ),
+      ),
     );
   }
 
-  Widget _buildChatList(List<Chat>? chats) {
+  Widget _buildChatList(List<Chat>? chats, bool isLoadingMore, String errMsg) {
     if (chats == null || chats.isEmpty) {
       return _buildLogo();
     }
@@ -125,9 +130,13 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: _scrollController,
         shrinkWrap: true,
         physics: const ScrollPhysics(),
-        itemCount: chats.length,
+        itemCount: chats.length + (isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
-          return _buildChat(chats[index]);
+          if (index == chats.length) {
+            return errMsg.isNotEmpty ? _buildError(errMsg) : _buildLoading();
+          } else {
+            return _buildChat(chats[index]);
+          }
         },
       ),
     );
@@ -135,9 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildChat(Chat chatData) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        Text(chatData.chat!, style: const TextStyle(color: Color(0xFFE1CDB5))),
+        Text(chatData.chat!, style: const TextStyle(color: Color(0xFFE1CDB5), fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         GridView.builder(
           shrinkWrap: true,
@@ -157,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisSpacing: 8,
           ),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 30),
       ],
     );
   }

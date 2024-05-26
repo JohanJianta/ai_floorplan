@@ -1,3 +1,4 @@
+import 'package:ai_floorplan_test/data/response/status.dart';
 import 'package:ai_floorplan_test/model/chat.dart';
 import 'package:ai_floorplan_test/model/history.dart';
 import 'package:ai_floorplan_test/model/floorplan.dart';

@@ -53,7 +53,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   Widget _buildDrawerItem({required String title, required VoidCallback onTapEvent}) {
     return ListTile(
-      title: Text(title, style: const TextStyle(color: Colors.white)),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       onTap: onTapEvent,
     );
   }
@@ -76,7 +82,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
       backgroundColor: const Color(0xFF393E46),
       headerBuilder: (BuildContext context, bool isExpanded) {
         return const ListTile(
-          title: Text('History', style: TextStyle(color: Colors.white)),
+          title: Text(
+            'History',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         );
       },
       body: ChangeNotifierProvider<HistoryViewModel>.value(
@@ -119,7 +131,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
       backgroundColor: const Color(0xFF393E46),
       headerBuilder: (BuildContext context, bool isExpanded) {
         return const ListTile(
-          title: Text('Setting', style: TextStyle(color: Colors.white)),
+          title: Text(
+            'Setting',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         );
       },
       body: Column(

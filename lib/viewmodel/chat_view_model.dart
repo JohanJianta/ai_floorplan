@@ -1,9 +1,9 @@
 part of 'view_model.dart';
 
 class ChatViewModel with ChangeNotifier {
-  ChatViewModel({this.chatgroupId = 0});
+  ChatViewModel({this.currentChatgroupId = 0});
 
-  int chatgroupId;
+  int currentChatgroupId;
 
   final ChatRepository _chatRepo = ChatRepository();
   ApiResponse<List<Chat>> response = ApiResponse.notStarted();
@@ -13,21 +13,16 @@ class ChatViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void addChat(Chat newChat) {
-    response.data?.add(newChat);
-    notifyListeners();
-  }
-
   Future<void> fetchChatData() async {
     setApiResponse(ApiResponse.loading());
 
-    if (chatgroupId == 0) {
+    if (currentChatgroupId == 0) {
       setApiResponse(ApiResponse.completed([]));
       return;
     }
 
     try {
-      List<Chat> result = await _chatRepo.fetchChatList(chatgroupId);
+      List<Chat> result = await _chatRepo.fetchChatList(currentChatgroupId);
       setApiResponse(ApiResponse.completed(result));
     } catch (error) {
       setApiResponse(ApiResponse.error(error.toString()));
@@ -35,25 +30,35 @@ class ChatViewModel with ChangeNotifier {
   }
 
   Future<void> postChat(String prompt) async {
-    setApiResponse(ApiResponse.loading());
+    response.message = '';
+
+    List<Chat> previousChat = [];
+    if (currentChatgroupId != 0 && response.data != null) {
+      previousChat = response.data!;
+    }
+
+    response.status = Status.loading;
+    notifyListeners();
 
     try {
-      // Send the new chat to the server
-      Chat result = await _chatRepo.sendChat(prompt, chatgroupId);
+      Chat result = await _chatRepo.sendChat(prompt, currentChatgroupId);
 
-      // Add the response chat to the chatList
-      addChat(result);
+      setApiResponse(ApiResponse.completed([...previousChat, result]));
 
-      // Update the ApiResponse status to completed
-      setApiResponse(ApiResponse.completed(response.data ?? []));
+      // Perbarui chatgroupId apabila nilainya berbeda dengan yang sekarang
+      if (result.chatgroupId != null && currentChatgroupId != result.chatgroupId) {
+        currentChatgroupId = result.chatgroupId!;
+      }
     } catch (error) {
-      setApiResponse(ApiResponse.error(error.toString()));
+      response.status = Status.error;
+      response.message = error.toString();
+      notifyListeners();
     }
   }
 
   void updateChatgroupId(int newChatgroupId) {
-    if (chatgroupId != newChatgroupId) {
-      chatgroupId = newChatgroupId;
+    if (currentChatgroupId != newChatgroupId) {
+      currentChatgroupId = newChatgroupId;
       fetchChatData();
     }
   }
