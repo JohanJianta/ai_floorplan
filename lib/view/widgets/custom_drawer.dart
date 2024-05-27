@@ -13,9 +13,17 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   late HistoryViewModel historyViewModel;
 
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
+
   void _handleRemoveHistory(int chatgroupId) async {
     try {
-      bool isConfirmed = await _showAlertDialog();
+      bool isConfirmed = await _showAlertDialog(
+        title: 'Konfirmasi Penghapusan',
+        content: 'Apakah anda yakin ingin menghapus chatgroup ini?',
+        primaryText: 'Hapus',
+      );
       if (!isConfirmed) return;
 
       String message = await historyViewModel.removeHistory(chatgroupId);
@@ -26,8 +34,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
     }
   }
 
-  void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  void _handleLogOut() async {
+    bool isConfirmed = await _showAlertDialog(
+      title: 'Konfirmasi Keluar',
+      content: 'Apakah anda yakin ingin keluar dari akun anda?',
+      primaryText: 'Keluar',
+    );
+    if (!isConfirmed) return;
+
+    // Reset informasi user
+    Const.userId = 0;
+    Const.auth = '';
+
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
   @override
@@ -48,17 +67,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return Drawer(
       child: Container(
         color: const Color(0xFF393E46),
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.only(top: 48, bottom: 20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               _buildDrawerItem(
-                title: 'Gallery',
+                title: 'Galeri',
                 onTapEvent: () => Navigator.of(context).pushNamed('/gallery'),
               ),
               _buildDrawerItem(
-                title: 'Trash Bin',
+                title: 'Sampah',
                 onTapEvent: () => Navigator.of(context).pushNamed('/trashbin'),
               ),
               _buildExpansionPanel(),
@@ -74,7 +93,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       title: Text(
         title,
         style: const TextStyle(
-          color: Colors.white,
+          color: Color(0xFFE1CDB5),
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -85,7 +104,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget _buildExpansionPanel() {
     return ExpansionPanelList.radio(
       elevation: 0,
-      expandIconColor: Colors.white,
+      expandIconColor: const Color(0xFFE1CDB5),
       dividerColor: const Color(0xFF393E46),
       children: [
         _buildHistoryExpansionPanel(),
@@ -101,9 +120,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
       headerBuilder: (BuildContext context, bool isExpanded) {
         return const ListTile(
           title: Text(
-            'History',
+            'Riwayat',
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFFE1CDB5),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -150,9 +169,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
       headerBuilder: (BuildContext context, bool isExpanded) {
         return const ListTile(
           title: Text(
-            'Setting',
+            'Pengaturan',
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFFE1CDB5),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -161,16 +180,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
       body: Column(
         children: [
           _buildSettingsItem(
-            title: 'Change Email',
+            title: 'Ubah Email',
             onTapEvent: () => Navigator.pop(context),
           ),
           _buildSettingsItem(
-            title: 'Change Password',
+            title: 'Ubah Kata Sandi',
             onTapEvent: () => Navigator.pop(context),
           ),
           _buildSettingsItem(
-            title: 'Log Out',
-            onTapEvent: () => Navigator.pop(context),
+            title: 'Keluar',
+            weight: FontWeight.bold,
+            icon: Icons.logout_sharp,
+            color: Colors.red,
+            onTapEvent: _handleLogOut,
           ),
         ],
       ),
@@ -180,7 +202,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   Widget _buildHistoryList(HistoryViewModel value) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 500),
+      constraints: const BoxConstraints(maxHeight: 480),
       child: ListView.builder(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
@@ -198,7 +220,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               visualDensity: VisualDensity.compact,
               title: Text(
                 value.historyList.data![index].chat!,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Color(0xFFE1CDB5)),
                 overflow: TextOverflow.ellipsis,
               ),
               onTap: () {
@@ -240,24 +262,30 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
-  Future<bool> _showAlertDialog() async {
+  Future<bool> _showAlertDialog({
+    required String title,
+    required String content,
+    required String primaryText,
+  }) async {
     Completer<bool> completer = Completer<bool>();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: const Text("Apakah anda yakin ingin menghapus chatgroup ini?"),
+          backgroundColor: const Color(0xFF393E46),
+          title: Text(title, style: const TextStyle(color: Color(0xFFE1CDB5))),
+          content: Text(content, style: const TextStyle(color: Color(0xFFE1CDB5))),
           actions: [
             TextButton(
-              child: const Text("Batal"),
+              child: const Text("Batal", style: TextStyle(color: Color(0xFFE1CDB5))),
               onPressed: () {
                 Navigator.of(context).pop();
                 completer.complete(false);
               },
             ),
             TextButton(
-              child: const Text("Lanjut"),
+              child: Text(primaryText, style: const TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(context).pop();
                 completer.complete(true);
@@ -271,11 +299,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return completer.future;
   }
 
-  Widget _buildSettingsItem({required String title, required VoidCallback onTapEvent}) {
+  Widget _buildSettingsItem({
+    required String title,
+    required VoidCallback onTapEvent,
+    Color? color = const Color(0xFFE1CDB5),
+    FontWeight? weight = FontWeight.normal,
+    IconData? icon,
+  }) {
     return ListTile(
+      leading: icon != null ? Icon(icon, color: color) : null,
       title: Text(
         title,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: color, fontWeight: weight),
       ),
       onTap: onTapEvent,
     );

@@ -17,14 +17,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/home', // Tentukan rute awal sebagai splash screen
+      initialRoute: '/splash', // Tentukan rute awal sebagai splash screen
       routes: {
         '/splash': (context) => const SplashScreen(), // Rute untuk splash screen
         '/home': (context) => const HomeScreen(), // Rute untuk home screen
-        '/login': (context) => LoginPage(), // Rute untuk home screen
-        '/register': (context) => RegisterPage(), // Rute untuk home screen
-        '/gallery': (context) => const GalleryPage(title: 'Gallery'),
-        '/trashbin': (context) => const TrashbinPage(title: 'Trash Bin'),
+        '/login': (context) => LoginPage(), // Rute untuk login screen
+        '/register': (context) => RegisterPage(), // Rute untuk register screen
+        '/gallery': (context) => const GalleryPage(), // Rute untuk gallery screen
+        '/trashbin': (context) => const TrashbinPage(), // Rute untuk trashbin screen
       },
     );
   }
