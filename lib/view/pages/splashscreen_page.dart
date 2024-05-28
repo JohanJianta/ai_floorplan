@@ -11,9 +11,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Tunda navigasi ke halaman beranda selama 2 detik
-    Future.delayed(const Duration(seconds: 4), () {
-      Navigator.pushReplacementNamed(context, '/register');
+    Const.initializeCache();
+    // Tunda navigasi ke halaman beranda selama 4 detik
+    Future.delayed(const Duration(seconds: 4), () async {
+      if (Const.userId != 0 && Const.auth.isNotEmpty) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacementNamed(context, '/register');
+      }
     });
   }
 
@@ -35,6 +40,8 @@ class _SplashScreenState extends State<SplashScreen> {
               'AI Floorplan',
               style: TextStyle(
                 fontSize: 32,
+                letterSpacing: 4,
+                fontWeight: FontWeight.bold,
                 color: Color(0xFFE1CDB5),
               ),
             ),

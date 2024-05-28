@@ -121,6 +121,7 @@ class LoginPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -151,17 +152,42 @@ class LoginPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Belum memiliki akun?',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Pindah ke halaman register jika sudah punya akun
+                          Navigator.of(context).pushNamed('/register');
+                        },
+                        child: const Text(
+                          'Register',
+                          style: TextStyle(
+                            color: Color(0xFF00ADB5),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   // Continue as a guest Button
                   TextButton(
                     onPressed: () {
                       // TODO: Add logic for "Continue as a guest" here
-                      Const.userId = 0;
-                      Const.auth = '';
-                      Navigator.of(context).pushReplacementNamed('/home');
+                      ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar('Mode ini belum tersedia'));
+                      // Const.signIn(0, '');
+                      // Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/'));
                     },
                     child: const Text(
-                      'Continue as a guest',
+                      'Masuk sebagai Tamu',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

@@ -12,6 +12,8 @@ class UserRepository {
         Const.userId = response.body['payload']['userId']!;
         Const.auth = response.headers['authorization']!;
 
+        await Const.signIn(response.body['payload']['userId']!, response.headers['authorization']!);
+
         result = response.body['messages'][0].toString();
       }
 
@@ -31,6 +33,8 @@ class UserRepository {
       if (response.body['success']) {
         Const.userId = response.body['payload']['userId']!;
         Const.auth = response.headers['authorization']!;
+
+        await Const.signIn(response.body['payload']['userId']!, response.headers['authorization']!);
 
         result = response.body['messages'][0].toString();
       }

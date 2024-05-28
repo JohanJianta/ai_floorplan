@@ -82,7 +82,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
       case 'Edit':
         _handleSelectCard(null);
         break;
-      case 'Select All':
+      case 'Pilih Semua':
         if (trashbinViewModel.floorplanList.data != null) {
           setState(() {
             _selectedList.addAll(trashbinViewModel.floorplanList.data!);
@@ -122,7 +122,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
                 borderRadius: BorderRadius.circular(10),
               ),
               itemBuilder: (BuildContext context) {
-                return {'Edit', 'Select All'}.map((String choice) {
+                return {'Edit', 'Pilih Semua'}.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Text(choice, style: TextStyle(color: widget.secondaryColor)),
@@ -220,8 +220,8 @@ class _TrashbinPageState extends State<TrashbinPage> {
       selectedItemColor: widget.secondaryColor,
       unselectedItemColor: widget.secondaryColor,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.restore_sharp), label: 'Restore'),
-        BottomNavigationBarItem(icon: Icon(Icons.delete_forever_sharp), label: 'Delete'),
+        BottomNavigationBarItem(icon: Icon(Icons.restore_sharp), label: 'Pulihkan'),
+        BottomNavigationBarItem(icon: Icon(Icons.delete_forever_sharp), label: 'Hapus'),
       ],
       onTap: (value) {
         switch (value) {
@@ -246,7 +246,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
           backgroundColor: const Color(0xFF393E46),
           title: const Text("Konfirmasi Penghapusan", style: TextStyle(color: Color(0xFFE1CDB5))),
           content: const Text(
-            "Apakah anda yakin ingin menghapus floorplan secara permanen?",
+            "Apakah anda yakin ingin menghapus floorplan ini secara permanen?",
             style: TextStyle(color: Color(0xFFE1CDB5)),
           ),
           actions: [

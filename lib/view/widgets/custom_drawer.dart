@@ -43,8 +43,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
     if (!isConfirmed) return;
 
     // Reset informasi user
-    Const.userId = 0;
-    Const.auth = '';
+    Const.signout();
 
     Navigator.of(context).pushReplacementNamed('/login');
   }
@@ -184,7 +183,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             onTapEvent: () => Navigator.pop(context),
           ),
           _buildSettingsItem(
-            title: 'Ubah Kata Sandi',
+            title: 'Ubah Password',
             onTapEvent: () => Navigator.pop(context),
           ),
           _buildSettingsItem(
