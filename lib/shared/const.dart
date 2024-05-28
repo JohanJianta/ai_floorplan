@@ -2,8 +2,37 @@ part of 'shared.dart';
 
 class Const {
   static String baseUrl = 'http://192.168.1.4:8080/api/v1';
-  // static String baseUrl = 'http://10.1.70.49:8080/api/v1';
-  // static String auth = 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0ZXIxQGVtYWlsLmNvbSIsImlhdCI6MTcxNTYyNjU2MCwiZXhwIjoxNzE1NzEyOTYwfQ.3gQW_WmebiVnRqLUizWkcFdLEbcic90FV5ictIjOfRETNOVJQTXb00NJRyAp36Xc';
-  static String auth = 'Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0ZXIxQGVtYWlsLmNvbSIsImlhdCI6MTcxNjYzMDE2MywiZXhwIjoxNzE2NzE2NTYzfQ.qOmEQr-zDA7fmgOaBM1_-uyIsDGKUlA6MZ-SSp-15rmwNfvKKnIXNA9rRpYAJFtt';
-  static int userId = 1;
+  static String auth = '';
+  static int userId = 0;
+
+  static late final SharedPreferences sharedPrefs;
+  static late final JsonCacheMem jsonCache;
+
+  // Cache initialization
+  static void initializeCache() async {
+    sharedPrefs = await SharedPreferences.getInstance();
+    jsonCache = JsonCacheMem(JsonCacheSharedPreferences(sharedPrefs));
+    _refreshCache();
+  }
+
+  // Saving preferences data
+  static Future<void> signIn(int userId, String auth) async {
+    await jsonCache.refresh('profile', {'userId': userId, 'auth': auth});
+    _refreshCache();
+  }
+
+  // Frees up cached data before the user leaves the application.
+  static Future<void> signout() async {
+    await jsonCache.clear();
+    _refreshCache();
+  }
+
+  // Refreshing cache
+  static void _refreshCache() async {
+    final maps = await jsonCache.value('profile');
+    if (maps != null) {
+      userId = maps['userId'];
+      auth = maps['auth'];
+    }
+  }
 }

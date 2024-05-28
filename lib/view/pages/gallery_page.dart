@@ -1,9 +1,7 @@
 part of 'pages.dart';
 
 class GalleryPage extends StatefulWidget {
-  const GalleryPage({super.key, required this.title});
-
-  final String title;
+  const GalleryPage({super.key});
 
   final Color primaryColor = const Color(0xFF222831);
   final Color secondaryColor = const Color(0xFFE1CDB5);
@@ -70,7 +68,7 @@ class _GalleryPageState extends State<GalleryPage> {
       case 'Edit':
         _handleSelectCard(null);
         break;
-      case 'Select All':
+      case 'Pilih Semua':
         if (galleryViewModel.categoryList.data != null) {
           setState(() {
             galleryViewModel.categoryList.data?.forEach((category) {
@@ -95,7 +93,7 @@ class _GalleryPageState extends State<GalleryPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(
-            _selectionView ? '${_selectedList.length}  Dipilih' : widget.title,
+            _selectionView ? '${_selectedList.length}  Dipilih' : 'Galeri',
             style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w600),
           ),
           leading: IconButton(
@@ -112,7 +110,7 @@ class _GalleryPageState extends State<GalleryPage> {
                 borderRadius: BorderRadius.circular(10),
               ),
               itemBuilder: (BuildContext context) {
-                return {'Edit', 'Select All'}.map((String choice) {
+                return {'Edit', 'Pilih Semua'}.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Text(choice, style: TextStyle(color: widget.secondaryColor)),
@@ -173,7 +171,7 @@ class _GalleryPageState extends State<GalleryPage> {
       );
     } else {
       return Center(
-        child: Text('Gallery anda kosong', style: TextStyle(color: widget.secondaryColor)),
+        child: Text('Galeri anda kosong', style: TextStyle(color: widget.secondaryColor)),
       );
     }
   }
@@ -221,8 +219,8 @@ class _GalleryPageState extends State<GalleryPage> {
       selectedItemColor: widget.secondaryColor,
       unselectedItemColor: widget.secondaryColor,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.share_sharp), label: 'Share'),
-        BottomNavigationBarItem(icon: Icon(Icons.delete_sharp), label: 'Delete'),
+        BottomNavigationBarItem(icon: Icon(Icons.share_sharp), label: 'Bagikan'),
+        BottomNavigationBarItem(icon: Icon(Icons.delete_sharp), label: 'Hapus'),
       ],
       onTap: (value) {
         switch (value) {
@@ -245,18 +243,19 @@ class _GalleryPageState extends State<GalleryPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Konfirmasi Penghapusan"),
-          content: const Text("Apakah anda yakin ingin memindahkan floorplan ke trash bin?"),
+          backgroundColor: const Color(0xFF393E46),
+          title: const Text("Konfirmasi Penghapusan", style: TextStyle(color: Color(0xFFE1CDB5))),
+          content: const Text("Apakah anda yakin ingin memindahkan floorplan ke Sampah?", style: TextStyle(color: Color(0xFFE1CDB5))),
           actions: [
             TextButton(
-              child: const Text("Batal"),
+              child: const Text("Batal", style: TextStyle(color: Color(0xFFE1CDB5))),
               onPressed: () {
                 Navigator.of(context).pop();
                 completer.complete(false);
               },
             ),
             TextButton(
-              child: const Text("Lanjut"),
+              child: const Text("Hapus", style: TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(context).popUntil((route) => route.settings.name == '/gallery');
                 completer.complete(true);

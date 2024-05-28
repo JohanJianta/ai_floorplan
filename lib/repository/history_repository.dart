@@ -16,4 +16,20 @@ class HistoryRepository {
       rethrow;
     }
   }
+
+  Future<String> deleteHistory(int chatgroupId) async {
+    try {
+      dynamic response = await apiServices.getDeleteApiResponse('/chat/$chatgroupId');
+
+      String result = '';
+
+      if (response['success']) {
+        result = response['messages'][0].toString();
+      }
+
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

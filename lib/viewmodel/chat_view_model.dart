@@ -56,6 +56,15 @@ class ChatViewModel with ChangeNotifier {
     }
   }
 
+  Future<String> saveToGallery(int floorplanId) async {
+    try {
+      String result = await _chatRepo.saveFloorplan(floorplanId);
+      return result;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   void updateChatgroupId(int newChatgroupId) {
     if (currentChatgroupId != newChatgroupId) {
       currentChatgroupId = newChatgroupId;

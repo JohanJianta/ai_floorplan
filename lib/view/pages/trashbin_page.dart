@@ -1,9 +1,7 @@
 part of 'pages.dart';
 
 class TrashbinPage extends StatefulWidget {
-  const TrashbinPage({super.key, required this.title});
-
-  final String title;
+  const TrashbinPage({super.key});
 
   final Color primaryColor = const Color(0xFF222831);
   final Color secondaryColor = const Color(0xFFE1CDB5);
@@ -84,7 +82,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
       case 'Edit':
         _handleSelectCard(null);
         break;
-      case 'Select All':
+      case 'Pilih Semua':
         if (trashbinViewModel.floorplanList.data != null) {
           setState(() {
             _selectedList.addAll(trashbinViewModel.floorplanList.data!);
@@ -107,7 +105,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(
-            _selectionView ? '${_selectedList.length}  Dipilih' : widget.title,
+            _selectionView ? '${_selectedList.length}  Dipilih' : 'Sampah',
             style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w600),
           ),
           leading: IconButton(
@@ -124,7 +122,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
                 borderRadius: BorderRadius.circular(10),
               ),
               itemBuilder: (BuildContext context) {
-                return {'Edit', 'Select All'}.map((String choice) {
+                return {'Edit', 'Pilih Semua'}.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Text(choice, style: TextStyle(color: widget.secondaryColor)),
@@ -180,7 +178,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 32, 24, 40),
                 child: Text(
-                  'Floorplan yang anda hapus akan tersimpan di Trash Bin selama 30 hari sebelum terhapus secara permanen',
+                  'Floorplan yang anda hapus akan tersimpan di Sampah selama 30 hari sebelum terhapus secara permanen',
                   style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w500, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
@@ -211,7 +209,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
           ));
     } else {
       return Center(
-        child: Text('Trash Bin anda kosong', style: TextStyle(color: widget.secondaryColor)),
+        child: Text('Sampah anda kosong', style: TextStyle(color: widget.secondaryColor)),
       );
     }
   }
@@ -222,8 +220,8 @@ class _TrashbinPageState extends State<TrashbinPage> {
       selectedItemColor: widget.secondaryColor,
       unselectedItemColor: widget.secondaryColor,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.restore_sharp), label: 'Restore'),
-        BottomNavigationBarItem(icon: Icon(Icons.delete_forever_sharp), label: 'Delete'),
+        BottomNavigationBarItem(icon: Icon(Icons.restore_sharp), label: 'Pulihkan'),
+        BottomNavigationBarItem(icon: Icon(Icons.delete_forever_sharp), label: 'Hapus'),
       ],
       onTap: (value) {
         switch (value) {
@@ -245,18 +243,22 @@ class _TrashbinPageState extends State<TrashbinPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Konfirmasi Penghapusan"),
-          content: const Text("Apakah anda yakin ingin menghapus floorplan secara permanen?"),
+          backgroundColor: const Color(0xFF393E46),
+          title: const Text("Konfirmasi Penghapusan", style: TextStyle(color: Color(0xFFE1CDB5))),
+          content: const Text(
+            "Apakah anda yakin ingin menghapus floorplan ini secara permanen?",
+            style: TextStyle(color: Color(0xFFE1CDB5)),
+          ),
           actions: [
             TextButton(
-              child: const Text("Batal"),
+              child: const Text("Batal", style: TextStyle(color: Color(0xFFE1CDB5))),
               onPressed: () {
                 Navigator.of(context).pop();
                 completer.complete(false);
               },
             ),
             TextButton(
-              child: const Text("Lanjut"),
+              child: const Text("Hapus", style: TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(context).popUntil((route) => route.settings.name == '/trashbin');
                 completer.complete(true);

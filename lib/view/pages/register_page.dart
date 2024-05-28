@@ -114,35 +114,72 @@ class RegisterPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      // Pindah ke halaman login jika sudah punya akun
-                      Navigator.of(context).pushReplacementNamed('/login');
-                    },
-                    child: const Text(
-                      'Already have an account? Login',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                  // Divider and "Continue as a guest" Button
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey,
+                          height: 1.5,
+                        ),
                       ),
-                    ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          'or',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: Colors.grey,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Sudah memiliki akun?',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Pindah ke halaman login jika sudah punya akun
+                          Navigator.of(context).pushNamed('/login');
+                        },
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(
+                            color: Color(0xFF00ADB5),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
                       // TODO: Tambahkan logika untuk "Continue as a guest" di sini
-                      Const.userId = 0;
-                      Const.auth = '';
-                      Navigator.of(context).pushReplacementNamed('/home');
+                      ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar('Mode ini belum tersedia'));
+                      // Const.signIn(0, '');
+                      // Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/'));
                     },
                     child: const Text(
-                      'Continue as a guest',
+                      'Masuk sebagai Tamu',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

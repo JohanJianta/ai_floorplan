@@ -28,6 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  void _showSnackbar(String message) {
+    if (Navigator.of(context).canPop() && mounted) {
+      Navigator.of(context).pop();
+    }
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -40,10 +47,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _handleSaveFloorplan(Floorplan floorplan) async {
+    String message = await chatViewModel.saveToGallery(floorplan.floorplanId!);
+    _showSnackbar(message);
+  }
+
   void _handleSendChat() async {
     if (_chatController.text.isEmpty) return;
     await chatViewModel.postChat(_chatController.text.trim());
     _chatController.clear();
+  }
+
+  void _handleDeletedChatgroup(int chatgroupId) async {
+    if (chatgroupId != chatViewModel.currentChatgroupId) return;
+
+    // Reset homepage apabila sedang menampilkan data chatgroup yang sudah dihapus
+    chatViewModel.updateChatgroupId(0);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -52,7 +72,10 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       appBar: _buildAppBar(),
       backgroundColor: const Color(0xFF222831),
-      drawer: CustomDrawer(onChatgroupSelected: chatViewModel.updateChatgroupId), // Drawer
+      drawer: CustomDrawer(
+        onChatgroupSelected: chatViewModel.updateChatgroupId,
+        onChatgroupDeleted: _handleDeletedChatgroup,
+      ),
       body: _buildBody(),
     );
   }
@@ -164,10 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: chatData.floorplans?.length ?? 0,
           itemBuilder: (context, index) {
             return HomePageCard(
-              floorplan: chatData.floorplans!.elementAt(index),
-              onSave: (floorplan) {
-                // TODO: Implement save functionality
-              },
+              floorplan: chatData.floorplans![index],
+              onSave: _handleSaveFloorplan,
             );
           },
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
