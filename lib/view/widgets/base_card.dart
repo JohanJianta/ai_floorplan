@@ -109,11 +109,14 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
 
   void _showImageDialog() {
     showDialog(
+      barrierColor: const Color.fromARGB(221, 21, 21, 21),
       context: context,
       builder: (context) {
         return Dialog(
             insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+            shadowColor: const Color.fromARGB(221, 21, 21, 21),
             backgroundColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -12,9 +12,23 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   late HistoryViewModel historyViewModel;
+  final historyController = ExpansionTileController();
+  final settingController = ExpansionTileController();
 
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+  }
+
+  void _handleExpansionChanged(int index, bool isExpanded) {
+    if (!isExpanded) return;
+
+    if (index == 0) {
+      settingController.collapse();
+    }
+
+    if (index == 1) {
+      historyController.collapse();
+    }
   }
 
   void _handleRemoveHistory(int chatgroupId) async {
@@ -71,6 +85,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              _buildHistoryTile(),
               _buildDrawerItem(
                 title: 'Galeri',
                 onTapEvent: () => Navigator.of(context).pushNamed('/gallery'),
@@ -79,7 +94,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 title: 'Sampah',
                 onTapEvent: () => Navigator.of(context).pushNamed('/trashbin'),
               ),
-              _buildExpansionPanel(),
+              _buildSettingTile(),
             ],
           ),
         ),
@@ -100,102 +115,48 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
-  Widget _buildExpansionPanel() {
-    return ExpansionPanelList.radio(
-      elevation: 0,
-      expandIconColor: const Color(0xFFE1CDB5),
-      dividerColor: const Color(0xFF393E46),
-      children: [
-        _buildHistoryExpansionPanel(),
-        _buildSettingsExpansionPanel(),
-      ],
-    );
-  }
-
-  ExpansionPanelRadio _buildHistoryExpansionPanel() {
-    return ExpansionPanelRadio(
-      value: 'History',
-      backgroundColor: const Color(0xFF393E46),
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return const ListTile(
-          title: Text(
-            'Riwayat',
-            style: TextStyle(
-              color: Color(0xFFE1CDB5),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      },
-      body: ChangeNotifierProvider<HistoryViewModel>.value(
-        value: historyViewModel,
-        child: Consumer<HistoryViewModel>(
-          builder: (context, value, _) {
-            return _buildHistoryPanelBody(value);
-          },
+  Widget _buildHistoryTile() {
+    return ExpansionTile(
+      title: const Text(
+        'Riwayat',
+        style: TextStyle(
+          color: Color(0xFFE1CDB5),
+          fontWeight: FontWeight.bold,
         ),
       ),
-      canTapOnHeader: true,
-    );
-  }
-
-  Widget _buildHistoryPanelBody(HistoryViewModel value) {
-    switch (value.historyList.status) {
-      case Status.loading:
-        return const Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
-          child: Center(child: CircularProgressIndicator(color: Color(0xFFE1CDB5))),
-        );
-      case Status.error:
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            value.historyList.message.toString(),
-            style: const TextStyle(color: Colors.red),
+      initiallyExpanded: true,
+      controller: historyController,
+      iconColor: const Color(0xFFE1CDB5),
+      collapsedIconColor: const Color(0xFFE1CDB5),
+      onExpansionChanged: (value) => _handleExpansionChanged(0, value),
+      children: [
+        ChangeNotifierProvider<HistoryViewModel>.value(
+          value: historyViewModel,
+          child: Consumer<HistoryViewModel>(
+            builder: (context, value, _) {
+              switch (value.historyList.status) {
+                case Status.loading:
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Center(child: CircularProgressIndicator(color: Color(0xFFE1CDB5))),
+                  );
+                case Status.error:
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      value.historyList.message.toString(),
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                case Status.completed:
+                  return _buildHistoryList(value);
+                default:
+                  return Container();
+              }
+            },
           ),
-        );
-      case Status.completed:
-        return _buildHistoryList(value);
-      default:
-        return Container();
-    }
-  }
-
-  ExpansionPanelRadio _buildSettingsExpansionPanel() {
-    return ExpansionPanelRadio(
-      value: 'Setting',
-      backgroundColor: const Color(0xFF393E46),
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return const ListTile(
-          title: Text(
-            'Pengaturan',
-            style: TextStyle(
-              color: Color(0xFFE1CDB5),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      },
-      body: Column(
-        children: [
-          _buildSettingsItem(
-            title: 'Ubah Email',
-            onTapEvent: () => Navigator.pop(context),
-          ),
-          _buildSettingsItem(
-            title: 'Ubah Password',
-            onTapEvent: () => Navigator.pop(context),
-          ),
-          _buildSettingsItem(
-            title: 'Keluar',
-            weight: FontWeight.bold,
-            icon: Icons.logout_sharp,
-            color: Colors.red,
-            onTapEvent: _handleLogOut,
-          ),
-        ],
-      ),
-      canTapOnHeader: true,
+        ),
+      ],
     );
   }
 
@@ -231,6 +192,56 @@ class _CustomDrawerState extends State<CustomDrawer> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildSettingTile() {
+    return ExpansionTile(
+      title: const Text(
+        'Pengaturan',
+        style: TextStyle(
+          color: Color(0xFFE1CDB5),
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      controller: settingController,
+      iconColor: const Color(0xFFE1CDB5),
+      collapsedIconColor: const Color(0xFFE1CDB5),
+      onExpansionChanged: (value) => _handleExpansionChanged(1, value),
+      children: [
+        _buildSettingsItem(
+          title: 'Ubah Email',
+          onTapEvent: () => Navigator.pop(context),
+        ),
+        _buildSettingsItem(
+          title: 'Ubah Password',
+          onTapEvent: () => Navigator.pop(context),
+        ),
+        _buildSettingsItem(
+          title: 'Keluar',
+          weight: FontWeight.bold,
+          icon: Icons.logout_sharp,
+          color: Colors.red,
+          onTapEvent: _handleLogOut,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSettingsItem({
+    required String title,
+    required VoidCallback onTapEvent,
+    Color? color = const Color(0xFFE1CDB5),
+    FontWeight? weight = FontWeight.normal,
+    IconData? icon,
+  }) {
+    return ListTile(
+      leading: icon != null ? Icon(icon, color: color) : null,
+      title: Text(
+        title,
+        style: TextStyle(color: color, fontWeight: weight),
+      ),
+      onTap: onTapEvent,
     );
   }
 
@@ -296,22 +307,5 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
 
     return completer.future;
-  }
-
-  Widget _buildSettingsItem({
-    required String title,
-    required VoidCallback onTapEvent,
-    Color? color = const Color(0xFFE1CDB5),
-    FontWeight? weight = FontWeight.normal,
-    IconData? icon,
-  }) {
-    return ListTile(
-      leading: icon != null ? Icon(icon, color: color) : null,
-      title: Text(
-        title,
-        style: TextStyle(color: color, fontWeight: weight),
-      ),
-      onTap: onTapEvent,
-    );
   }
 }

@@ -17,11 +17,12 @@ class RegisterPage extends StatelessWidget {
       final String email = emailController.text;
       final String password = passwordController.text;
 
-      String message = await _userRepo.register(email, password);
+      await _userRepo.register(email, password);
 
-      _showSnackbar(context, message);
+      // String message = await _userRepo.register(email, password);
+      // _showSnackbar(context, message);
 
-      Navigator.of(context).pushReplacementNamed('/login');
+      Navigator.of(context).pushReplacementNamed('/home');
     } catch (e) {
       _showSnackbar(context, e.toString());
     }

@@ -13,6 +13,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   late ChatViewModel chatViewModel;
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,9 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _handleSendChat() async {
-    if (_chatController.text.isEmpty) return;
+    if (_chatController.text.isEmpty || isLoading) return;
+    isLoading = true;
     await chatViewModel.postChat(_chatController.text.trim());
     _chatController.clear();
+    isLoading = false;
   }
 
   void _handleDeletedChatgroup(int chatgroupId) async {
@@ -93,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.edit_square, color: Color(0xFFE1CDB5)),
+          icon: const Icon(Icons.add_to_photos_sharp, color: Color(0xFFE1CDB5)),
           onPressed: () => chatViewModel.updateChatgroupId(0),
         ),
       ],
@@ -234,16 +238,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Expanded(
       child: Container(
         constraints: const BoxConstraints(
-          maxHeight: 100,
+          maxHeight: 200,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.grey[200],
+          color: Colors.grey[isLoading ? 400 : 200],
         ),
         child: Scrollbar(
           child: SingleChildScrollView(
             child: TextField(
               controller: _chatController,
+              readOnly: isLoading ? true : false,
               maxLines: null,
               keyboardType: TextInputType.multiline,
               style: const TextStyle(
