@@ -29,16 +29,19 @@ class _GalleryCardState extends BaseCardState<GalleryCard> {
     return [
       buildActionButton(
         icon: Icons.share_sharp,
+        label: 'Bagikan',
         onPressed: () => Util.shareImages(context, [widget.floorplan.imageData!]),
       ),
       const SizedBox(width: 16),
       buildActionButton(
         icon: Icons.download_sharp,
+        label: 'Unduh',
         onPressed: () => Util.saveImage(context, widget.floorplan.imageData!),
       ),
       const SizedBox(width: 16),
       buildActionButton(
         icon: Icons.delete_sharp,
+        label: 'Hapus',
         onPressed: () => widget.onDelete(widget.floorplan),
       ),
     ];

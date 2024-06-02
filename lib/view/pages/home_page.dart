@@ -96,9 +96,13 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.add_to_photos_sharp, color: Color(0xFFE1CDB5)),
-          onPressed: () => chatViewModel.updateChatgroupId(0),
+        Tooltip(
+          message: 'Halaman Baru',
+          triggerMode: TooltipTriggerMode.longPress,
+          child: IconButton(
+            icon: const Icon(Icons.add_to_photos_sharp, color: Color(0xFFE1CDB5)),
+            onPressed: () => chatViewModel.updateChatgroupId(0),
+          ),
         ),
       ],
     );

@@ -136,7 +136,10 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Image.memory(base64Decode(widget.floorplan.imageData!)),
+                  WidgetZoom(
+                    heroAnimationTag: 'floorplanTag',
+                    zoomWidget: Image.memory(base64Decode(widget.floorplan.imageData!)),
+                  ),
                   Container(
                     height: 150,
                     margin: const EdgeInsets.symmetric(vertical: 24),
@@ -166,12 +169,23 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
     );
   }
 
-  Widget buildActionButton({required IconData icon, required VoidCallback onPressed}) {
+  Widget buildActionButton({required IconData icon, required String label, required VoidCallback onPressed}) {
     return Expanded(
-      child: Container(
-        height: 50,
-        color: widget.tertiaryColor,
-        child: IconButton(onPressed: onPressed, icon: Icon(icon, color: widget.secondaryColor)),
+      child: SizedBox(
+        height: 55,
+        child: Material(
+          color: widget.tertiaryColor,
+          child: InkWell(
+            onTap: onPressed,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: widget.secondaryColor),
+                Text(label, style: TextStyle(color: widget.secondaryColor)),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

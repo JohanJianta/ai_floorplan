@@ -31,17 +31,20 @@ class _HomePageCardState extends BaseCardState<HomePageCard> {
     return [
       buildActionButton(
         icon: Icons.share_sharp,
+        label: 'Bagikan',
         onPressed: () => Util.shareImages(context, [widget.floorplan.imageData!]),
       ),
       const SizedBox(width: 16),
       buildActionButton(
         icon: Icons.download_sharp,
+        label: 'Unduh',
         onPressed: () => Util.saveImage(context, widget.floorplan.imageData!),
       ),
       (Const.userId != 0 && Const.auth.isNotEmpty) ? const SizedBox(width: 16) : const SizedBox.shrink(),
       (Const.userId != 0 && Const.auth.isNotEmpty)
           ? buildActionButton(
-              icon: Icons.bookmark_sharp,
+              icon: Icons.save_sharp,
+              label: 'Simpan',
               onPressed: () => widget.onSave(widget.floorplan),
             )
           : const SizedBox.shrink(),

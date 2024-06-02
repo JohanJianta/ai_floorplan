@@ -7,6 +7,7 @@ import 'package:ai_floorplan_test/shared/shared.dart';
 import 'package:ai_floorplan_test/viewmodel/view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:widget_zoom/widget_zoom.dart';
 
 part 'base_card.dart';
 part 'gallery_card.dart';

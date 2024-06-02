@@ -45,6 +45,7 @@ class _TrashbinCardState extends BaseCardState<TrashbinCard> {
     return [
       super.buildActionButton(
         icon: Icons.restore_sharp,
+        label: 'Pulihkan',
         onPressed: () {
           Navigator.of(context).pop();
           widget.onRestore(widget.floorplan);
@@ -53,6 +54,7 @@ class _TrashbinCardState extends BaseCardState<TrashbinCard> {
       const SizedBox(width: 16),
       super.buildActionButton(
         icon: Icons.delete_forever_sharp,
+        label: 'Hapus Permanen',
         onPressed: () => widget.onDelete(widget.floorplan),
       ),
     ];
