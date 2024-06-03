@@ -66,7 +66,7 @@ class ChatViewModel with ChangeNotifier {
   }
 
   void updateChatgroupId(int newChatgroupId) {
-    if (currentChatgroupId != newChatgroupId) {
+    if (currentChatgroupId != newChatgroupId || currentChatgroupId == 0) {
       currentChatgroupId = newChatgroupId;
       fetchChatData();
     }

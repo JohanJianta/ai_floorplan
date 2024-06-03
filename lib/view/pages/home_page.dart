@@ -7,24 +7,32 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _chatController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late ChatViewModel chatViewModel;
+  late AnimationController loadingController;
 
-  bool isLoading = false;
+  bool isLoadingChat = false;
 
   @override
   void initState() {
-    super.initState();
     chatViewModel = ChatViewModel();
     chatViewModel.addListener(_scrollToBottom);
     chatViewModel.fetchChatData();
+    loadingController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 15),
+    )..addListener(() {
+        setState(() {});
+      });
+    super.initState();
   }
 
   @override
   void dispose() {
+    loadingController.dispose();
     _scrollController.dispose();
     chatViewModel.removeListener(_scrollToBottom);
     super.dispose();
@@ -55,11 +63,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _handleSendChat() async {
-    if (_chatController.text.isEmpty || isLoading) return;
-    isLoading = true;
-    await chatViewModel.postChat(_chatController.text.trim());
-    _chatController.clear();
-    isLoading = false;
+    if (_chatController.text.isEmpty || isLoadingChat) return;
+    isLoadingChat = true;
+
+    // Mulai animasi loading
+    loadingController.forward(from: 0.0);
+
+    try {
+      await chatViewModel.postChat(_chatController.text.trim());
+      _chatController.clear();
+    } finally {
+      // Hentikan animasi loading
+      loadingController.stop();
+      isLoadingChat = false;
+    }
   }
 
   void _handleDeletedChatgroup(int chatgroupId) async {
@@ -137,10 +154,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLoading() {
-    return const Padding(
-      padding: EdgeInsets.only(top: 16, bottom: 30),
+    // Berhenti di 90% apabila belum selesai
+    double progressValue = loadingController.value < 0.9 ? loadingController.value : 0.9;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 30),
       child: Center(
-        child: CircularProgressIndicator(color: Color(0xFFE1CDB5)),
+        child: isLoadingChat
+            // Indikator loading ketika menunggu floorplan di generate
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: progressValue,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFE1CDB5)),
+                    backgroundColor: const Color.fromARGB(100, 225, 205, 181),
+                    strokeCap: StrokeCap.round,
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    '${(progressValue * 100).round()}%',
+                    style: const TextStyle(color: Color(0xFFE1CDB5)),
+                  ),
+                ],
+              )
+            : const CircularProgressIndicator(color: Color(0xFFE1CDB5)),
       ),
     );
   }
@@ -246,13 +284,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.grey[isLoading ? 400 : 200],
+          color: Colors.grey[isLoadingChat ? 400 : 200],
         ),
         child: Scrollbar(
           child: SingleChildScrollView(
             child: TextField(
               controller: _chatController,
-              readOnly: isLoading ? true : false,
+              readOnly: isLoadingChat ? true : false,
               maxLines: null,
               keyboardType: TextInputType.multiline,
               style: const TextStyle(
