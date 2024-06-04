@@ -11,10 +11,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _chatController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  late ChatViewModel chatViewModel;
   late AnimationController loadingController;
+  late ChatViewModel chatViewModel;
 
   bool isLoadingChat = false;
+  int currentChatgroupId = 0;
 
   @override
   void initState() {
@@ -80,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _handleDeletedChatgroup(int chatgroupId) async {
-    if (chatgroupId != chatViewModel.currentChatgroupId) return;
+    if (chatgroupId != chatViewModel.chatgroupId) return;
 
     // Reset homepage apabila sedang menampilkan data chatgroup yang sudah dihapus
     chatViewModel.updateChatgroupId(0);
@@ -94,7 +95,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       appBar: _buildAppBar(),
       backgroundColor: const Color(0xFF222831),
       drawer: CustomDrawer(
-        onChatgroupSelected: chatViewModel.updateChatgroupId,
+        currentChatgroupId: currentChatgroupId,
+        onChatgroupSelected: (chatgroupId) {
+          setState(() => currentChatgroupId = chatgroupId);
+          chatViewModel.updateChatgroupId(chatgroupId);
+        },
         onChatgroupDeleted: _handleDeletedChatgroup,
       ),
       body: _buildBody(),
@@ -140,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: {Status.loading, Status.error}.contains(status) && (data == null || data.isEmpty)
                     // Tampilkan indikator loading atau pesan error saja apabila belum ada data chat
                     ? status == Status.loading
-                        ? _buildLoading()
+                        ? _buildLoading(isLoadingChat)
                         : _buildError(message.toString())
                     // Tampilkan data chat apabila sudah ada, kemudian tambahkan indikator loading atau pesan error tergantung status
                     : _buildChatList(data, {Status.loading, Status.error}.contains(status), message?.toString() ?? ''),
@@ -153,14 +158,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildLoading() {
+  Widget _buildLoading(bool withPercentage) {
     // Berhenti di 90% apabila belum selesai
     double progressValue = loadingController.value < 0.9 ? loadingController.value : 0.9;
 
     return Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 30),
       child: Center(
-        child: isLoadingChat
+        child: withPercentage
             // Indikator loading ketika menunggu floorplan di generate
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -211,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         itemBuilder: (context, index) {
           if (index == chats.length) {
             // Tampilkan pesan error apabila terjadi error, atau indikator loading apabila sedang menunggu
-            return errMsg.isNotEmpty ? _buildError(errMsg) : _buildLoading();
+            return errMsg.isNotEmpty ? _buildError(errMsg) : _buildLoading(isLoadingMore);
           } else {
             return _buildChat(chats[index]);
           }

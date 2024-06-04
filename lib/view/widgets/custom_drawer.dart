@@ -1,8 +1,9 @@
 part of 'widgets.dart';
 
 class CustomDrawer extends StatefulWidget {
-  const CustomDrawer({super.key, required this.onChatgroupSelected, required this.onChatgroupDeleted});
+  const CustomDrawer({super.key, required this.currentChatgroupId, required this.onChatgroupSelected, required this.onChatgroupDeleted});
 
+  final int currentChatgroupId;
   final Function(int) onChatgroupSelected;
   final Function(int) onChatgroupDeleted;
 
@@ -134,7 +135,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           value: historyViewModel,
           child: Consumer<HistoryViewModel>(
             builder: (context, value, _) {
-              switch (value.historyList.status) {
+              switch (value.response.status) {
                 case Status.loading:
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
@@ -144,7 +145,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   return Padding(
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      value.historyList.message.toString(),
+                      value.response.message.toString(),
                       style: const TextStyle(color: Colors.red),
                     ),
                   );
@@ -167,31 +168,59 @@ class _CustomDrawerState extends State<CustomDrawer> {
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const ScrollPhysics(),
-        itemCount: value.historyList.data!.length,
+        itemCount: value.response.data?.length,
         itemBuilder: (context, index) {
-          return GestureDetector(
-            onLongPressStart: (details) {
-              // Tampilkan pop up menu untuk hapus history
-              _showPopupMenu(details.globalPosition, value.historyList.data![index].chatgroupId!);
-            },
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              dense: true,
-              visualDensity: VisualDensity.compact,
-              title: Text(
-                value.historyList.data![index].chat!,
-                style: const TextStyle(color: Color(0xFFE1CDB5)),
-                overflow: TextOverflow.ellipsis,
-              ),
-              onTap: () {
-                // Tutup drawer, kemudian tampilkan data chat di homepage
-                Navigator.pop(context);
-                widget.onChatgroupSelected(value.historyList.data![index].chatgroupId!);
-              },
-            ),
-          );
+          return _buildCategory(value.response.data![index]);
         },
       ),
+    );
+  }
+
+  Widget _buildCategory(CategorizedHistory category) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Text(
+            category.label,
+            style: const TextStyle(color: Color(0xFFE1CDB5), fontWeight: FontWeight.bold),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: category.histories.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onLongPressStart: (details) {
+                // Tampilkan pop up menu untuk hapus history
+                _showPopupMenu(details.globalPosition, category.histories[index].chatgroupId!);
+              },
+              child: Container(
+                color: category.histories[index].chatgroupId == widget.currentChatgroupId ? const Color(0xAA222831) : null,
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                  title: Text(
+                    category.histories[index].chat!,
+                    style: const TextStyle(color: Color(0xFFE1CDB5)),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    // Tutup drawer, kemudian tampilkan data chat di homepage
+                    Navigator.pop(context);
+                    widget.onChatgroupSelected(category.histories[index].chatgroupId!);
+                  },
+                ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 
