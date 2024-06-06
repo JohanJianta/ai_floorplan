@@ -3,10 +3,6 @@ part of 'pages.dart';
 class TrashbinPage extends StatefulWidget {
   const TrashbinPage({super.key});
 
-  final Color primaryColor = const Color(0xFF222831);
-  final Color secondaryColor = const Color(0xFFE1CDB5);
-  final Color tertiaryColor = const Color(0xFF31363F);
-
   @override
   State<TrashbinPage> createState() => _TrashbinPageState();
 }
@@ -23,7 +19,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
   }
 
   void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(context, message));
   }
 
   void _handleRestoreCard(Floorplan floorplan) async {
@@ -101,31 +97,31 @@ class _TrashbinPageState extends State<TrashbinPage> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: widget.primaryColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(
             _selectionView ? '${_selectedList.length}  Dipilih' : 'Sampah',
-            style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w600),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
           ),
           leading: IconButton(
             onPressed: _handleBackButton,
-            icon: Icon(Icons.arrow_back_sharp, color: widget.secondaryColor),
+            icon: Icon(Icons.arrow_back_sharp, color: Theme.of(context).colorScheme.primary),
           ),
           actions: [
             PopupMenuButton<String>(
               onSelected: handleClick,
-              color: widget.tertiaryColor,
-              icon: Icon(Icons.more_vert_sharp, color: widget.secondaryColor),
+              color: Theme.of(context).primaryColor,
+              surfaceTintColor: Colors.transparent,
+              icon: Icon(Icons.more_vert_sharp, color: Theme.of(context).colorScheme.primary),
               shape: RoundedRectangleBorder(
-                side: BorderSide(color: widget.secondaryColor, width: 1.5),
+                side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
                 borderRadius: BorderRadius.circular(10),
               ),
               itemBuilder: (BuildContext context) {
                 return {'Edit', 'Pilih Semua'}.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
-                    child: Text(choice, style: TextStyle(color: widget.secondaryColor)),
+                    child: Text(choice, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                   );
                 }).toList();
               },
@@ -155,7 +151,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
 
   Widget _buildLoading() {
     return Center(
-      child: CircularProgressIndicator(color: widget.secondaryColor),
+      child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
     );
   }
 
@@ -163,8 +159,11 @@ class _TrashbinPageState extends State<TrashbinPage> {
     return Center(
       child: ElevatedButton(
         onPressed: _handleBackButton,
-        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(widget.tertiaryColor)),
-        child: Text('Kembali ke Homepage', style: TextStyle(color: widget.secondaryColor)),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Theme.of(context).primaryColor),
+          surfaceTintColor: MaterialStateProperty.all(Colors.transparent),
+        ),
+        child: const Text('Kembali ke Homepage'),
       ),
     );
   }
@@ -179,7 +178,7 @@ class _TrashbinPageState extends State<TrashbinPage> {
                 padding: const EdgeInsets.fromLTRB(24, 32, 24, 40),
                 child: Text(
                   'Floorplan yang anda hapus akan tersimpan di Sampah selama 30 hari sebelum terhapus secara permanen',
-                  style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w500, fontSize: 16),
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w500, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -195,8 +194,6 @@ class _TrashbinPageState extends State<TrashbinPage> {
                     onRestore: _handleRestoreCard,
                     onDelete: _handleDeleteCard,
                     onSelected: _handleSelectCard,
-                    secondaryColor: widget.secondaryColor,
-                    tertiaryColor: widget.tertiaryColor,
                   );
                 },
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -209,16 +206,16 @@ class _TrashbinPageState extends State<TrashbinPage> {
           ));
     } else {
       return Center(
-        child: Text('Sampah anda kosong', style: TextStyle(color: widget.secondaryColor)),
+        child: Text('Sampah anda kosong', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       );
     }
   }
 
   Widget _buildBottomNavbar() {
     return BottomNavigationBar(
-      backgroundColor: widget.tertiaryColor,
-      selectedItemColor: widget.secondaryColor,
-      unselectedItemColor: widget.secondaryColor,
+      backgroundColor: Theme.of(context).primaryColor,
+      selectedItemColor: Theme.of(context).colorScheme.primary,
+      unselectedItemColor: Theme.of(context).colorScheme.primary,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.restore_sharp), label: 'Pulihkan'),
         BottomNavigationBarItem(icon: Icon(Icons.delete_forever_sharp), label: 'Hapus'),
@@ -243,15 +240,16 @@ class _TrashbinPageState extends State<TrashbinPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF393E46),
-          title: const Text("Konfirmasi Penghapusan", style: TextStyle(color: Color(0xFFE1CDB5))),
-          content: const Text(
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Theme.of(context).colorScheme.background,
+          title: Text("Konfirmasi Penghapusan", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+          content: Text(
             "Apakah anda yakin ingin menghapus floorplan ini secara permanen?",
-            style: TextStyle(color: Color(0xFFE1CDB5)),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           actions: [
             TextButton(
-              child: const Text("Batal", style: TextStyle(color: Color(0xFFE1CDB5))),
+              child: const Text("Batal"),
               onPressed: () {
                 Navigator.of(context).pop();
                 completer.complete(false);

@@ -3,8 +3,6 @@ part of 'widgets.dart';
 abstract class CardBase extends StatefulWidget {
   final Floorplan floorplan;
   final bool selectionView;
-  final Color tertiaryColor;
-  final Color secondaryColor;
   final bool isSelected;
   final Function(Floorplan) onSelected;
 
@@ -13,8 +11,6 @@ abstract class CardBase extends StatefulWidget {
     required this.floorplan,
     required this.selectionView,
     required this.isSelected,
-    required this.secondaryColor,
-    required this.tertiaryColor,
     required this.onSelected,
   });
 
@@ -96,9 +92,10 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                 height: 20,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.tertiaryColor.withOpacity(0.4),
-                  border: Border.all(width: 2.5, color: widget.tertiaryColor),
-                ))
+                  color: const Color(0xFF31363F).withOpacity(0.4),
+                  border: Border.all(width: 2.5, color: const Color(0xFF31363F)),
+                ),
+              )
             : const Icon(
                 Icons.check_circle_sharp,
                 color: Colors.blue,
@@ -114,9 +111,8 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
       builder: (context) {
         return Dialog(
             insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-            shadowColor: const Color.fromARGB(221, 21, 21, 21),
             backgroundColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
+            elevation: 0,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -126,11 +122,11 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                     alignment: Alignment.topRight,
                     child: ClipOval(
                       child: Container(
-                        color: widget.tertiaryColor,
+                        color: Theme.of(context).primaryColor,
                         child: IconButton(
                           onPressed: () => Navigator.of(context).pop(),
                           icon: const Icon(Icons.close_sharp),
-                          color: widget.secondaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
@@ -144,14 +140,14 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                     height: 150,
                     margin: const EdgeInsets.symmetric(vertical: 24),
                     padding: const EdgeInsets.all(12),
-                    color: widget.tertiaryColor,
+                    color: Theme.of(context).primaryColor,
                     alignment: Alignment.center,
                     child: SingleChildScrollView(
                       child: Text(
                         '${widget.floorplan.prompt}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: widget.secondaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
                         ),
@@ -174,14 +170,14 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
       child: SizedBox(
         height: 55,
         child: Material(
-          color: widget.tertiaryColor,
+          color: Theme.of(context).primaryColor,
           child: InkWell(
             onTap: onPressed,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: widget.secondaryColor),
-                Text(label, style: TextStyle(color: widget.secondaryColor)),
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
+                Text(label, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
               ],
             ),
           ),

@@ -1,8 +1,16 @@
+import 'package:ai_floorplan_test/shared/shared.dart';
+import 'package:ai_floorplan_test/themes.dart';
 import 'package:ai_floorplan_test/view/pages/pages.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => Const.instance,
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -10,21 +18,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      initialRoute: '/splash', // Tentukan rute awal sebagai splash screen
-      routes: {
-        '/splash': (context) => const SplashScreen(), // Rute untuk splash screen
-        '/home': (context) => const HomeScreen(), // Rute untuk home screen
-        '/login': (context) => LoginPage(), // Rute untuk login screen
-        '/register': (context) => RegisterPage(), // Rute untuk register screen
-        '/gallery': (context) => const GalleryPage(), // Rute untuk gallery screen
-        '/trashbin': (context) => const TrashbinPage(), // Rute untuk trashbin screen
+    return Consumer<Const>(
+      builder: (context, constInstance, child) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          debugShowCheckedModeBanner: false,
+          themeMode: Const.themeMode,
+          theme: ThemeClass.lightTheme,
+          darkTheme: ThemeClass.darkTheme,
+          initialRoute: '/splash',
+          routes: {
+            '/splash': (context) => const SplashScreen(),
+            '/home': (context) => const HomeScreen(),
+            '/login': (context) => LoginPage(),
+            '/register': (context) => RegisterPage(),
+            '/gallery': (context) => const GalleryPage(),
+            '/trashbin': (context) => const TrashbinPage(),
+          },
+        );
       },
     );
   }

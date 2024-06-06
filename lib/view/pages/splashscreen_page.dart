@@ -25,7 +25,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF222831),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -34,15 +33,16 @@ class _SplashScreenState extends State<SplashScreen> {
               'lib/assets/logo.svg',
               width: 171,
               height: 114,
+              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'AI Floorplan',
               style: TextStyle(
                 fontSize: 32,
                 letterSpacing: 4,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFE1CDB5),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ],

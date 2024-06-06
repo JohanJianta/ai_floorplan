@@ -11,8 +11,6 @@ class HomePageCard extends CardBase {
     required this.onSave,
     super.selectionView = false,
     super.isSelected = false,
-    super.secondaryColor = const Color(0xFFE1CDB5),
-    super.tertiaryColor = const Color(0xFF31363F),
     super.onSelected = _defaultOnSelected,
   });
 

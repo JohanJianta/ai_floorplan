@@ -8,8 +8,6 @@ class GalleryCard extends CardBase {
     required super.floorplan,
     required super.selectionView,
     required super.isSelected,
-    required super.secondaryColor,
-    required super.tertiaryColor,
     required super.onSelected,
     required this.onDelete,
   });

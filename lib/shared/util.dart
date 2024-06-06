@@ -1,8 +1,11 @@
 part of 'shared.dart';
 
 class Util {
-  static SnackBar getSnackBar(String message) {
-    return SnackBar(content: Text(message, style: const TextStyle(color: Color(0xFFE1CDB5))));
+  static SnackBar getSnackBar(BuildContext context, String message) {
+    return SnackBar(
+      backgroundColor: Theme.of(context).primaryColor,
+      content: Text(message, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+    );
   }
 
   static Future<void> saveImage(BuildContext context, String base64String) async {
@@ -27,7 +30,7 @@ class Util {
     }
 
     if (message.isNotEmpty) {
-      scaffoldMessenger.showSnackBar(Util.getSnackBar(message));
+      scaffoldMessenger.showSnackBar(Util.getSnackBar(context, message));
     }
   }
 
@@ -61,7 +64,7 @@ class Util {
     }
 
     if (message.isNotEmpty) {
-      scaffoldMessenger.showSnackBar(Util.getSnackBar(message));
+      scaffoldMessenger.showSnackBar(Util.getSnackBar(context, message));
     }
   }
 

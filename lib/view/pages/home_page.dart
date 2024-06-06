@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (Navigator.of(context).canPop() && mounted) {
       Navigator.of(context).pop();
     }
-    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(context, message));
   }
 
   void _scrollToBottom() {
@@ -93,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
-      backgroundColor: const Color(0xFF222831),
       drawer: CustomDrawer(
         currentChatgroupId: currentChatgroupId,
         onChatgroupSelected: (chatgroupId) {
@@ -108,13 +107,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: const Color(0xFF222831),
-      title: const Text(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      title: Text(
         'AI Floorplan',
-        style: TextStyle(color: Color(0xFFE1CDB5), fontWeight: FontWeight.bold),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.menu, color: Color(0xFFE1CDB5)),
+        icon: Icon(Icons.menu, color: Theme.of(context).colorScheme.primary),
         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
       ),
       actions: [
@@ -122,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           message: 'Halaman Baru',
           triggerMode: TooltipTriggerMode.longPress,
           child: IconButton(
-            icon: const Icon(Icons.add_to_photos_sharp, color: Color(0xFFE1CDB5)),
+            icon: Icon(Icons.add_to_photos_sharp, color: Theme.of(context).colorScheme.primary),
             onPressed: () => chatViewModel.updateChatgroupId(0),
           ),
         ),
@@ -172,18 +171,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 children: [
                   CircularProgressIndicator(
                     value: progressValue,
-                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFE1CDB5)),
-                    backgroundColor: const Color.fromARGB(100, 225, 205, 181),
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                    backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.4),
                     strokeCap: StrokeCap.round,
                   ),
                   const SizedBox(height: 5),
                   Text(
                     '${(progressValue * 100).round()}%',
-                    style: const TextStyle(color: Color(0xFFE1CDB5)),
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
                   ),
                 ],
               )
-            : const CircularProgressIndicator(color: Color(0xFFE1CDB5)),
+            : CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
       ),
     );
   }
@@ -230,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
-        Text(chatData.chat!, style: const TextStyle(color: Color(0xFFE1CDB5), fontWeight: FontWeight.bold)),
+        Text(chatData.chat!, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         GridView.builder(
           shrinkWrap: true,
@@ -259,6 +258,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         'lib/assets/logo.svg',
         width: 70,
         height: 58,
+        colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn),
       ),
     );
   }
@@ -282,6 +282,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Expanded _buildTextField() {
+    double defaultOpacity = 0.1;
+    double loadingOpacity = 0.3;
+
+    if (Theme.of(context).brightness == Brightness.dark) {
+      defaultOpacity = 1;
+      loadingOpacity = 0.7;
+    }
+
     return Expanded(
       child: Container(
         constraints: const BoxConstraints(
@@ -289,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.grey[isLoadingChat ? 400 : 200],
+          color: Theme.of(context).colorScheme.secondary.withOpacity(isLoadingChat ? loadingOpacity : defaultOpacity),
         ),
         child: Scrollbar(
           child: SingleChildScrollView(
@@ -302,11 +310,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 fontSize: 12,
                 color: Colors.black,
               ),
-              decoration: const InputDecoration(
-                hintText: 'Masukkan kriteria floorplan anda',
+              decoration: InputDecoration(
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                hintText: 'Masukkan kriteria floorplan anda',
+                hintStyle: TextStyle(color: Colors.black.withOpacity(0.6)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               ),
+              cursorColor: Theme.of(context).colorScheme.tertiary,
             ),
           ),
         ),
@@ -315,13 +325,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   ClipOval _buildIconButton({required IconData icon, required VoidCallback onPressed}) {
+    Color containerColor = Colors.transparent;
+    Color iconColor = Theme.of(context).colorScheme.primary;
+
+    if (Theme.of(context).brightness == Brightness.dark) {
+      containerColor = Theme.of(context).colorScheme.primary;
+      iconColor = Theme.of(context).colorScheme.background;
+    }
+
     return ClipOval(
       child: Container(
-        color: const Color(0xFFE1CDB5),
-        child: IconButton(
-          onPressed: onPressed,
-          icon: Icon(icon),
-        ),
+        color: containerColor,
+        child: IconButton(onPressed: onPressed, icon: Icon(icon, color: iconColor)),
       ),
     );
   }

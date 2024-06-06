@@ -17,7 +17,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   final settingController = ExpansionTileController();
 
   void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(context, message));
   }
 
   void _handleExpansionChanged(int index, bool isExpanded) {
@@ -80,7 +80,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: const Color(0xFF393E46),
+        color: Theme.of(context).colorScheme.background,
         padding: const EdgeInsets.only(top: 48, bottom: 20),
         child: SingleChildScrollView(
           child: Column(
@@ -107,8 +107,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return ListTile(
       title: Text(
         title,
-        style: const TextStyle(
-          color: Color(0xFFE1CDB5),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -118,17 +118,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   Widget _buildHistoryTile() {
     return ExpansionTile(
-      title: const Text(
+      title: Text(
         'Riwayat',
         style: TextStyle(
-          color: Color(0xFFE1CDB5),
+          color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.bold,
         ),
       ),
       initiallyExpanded: true,
       controller: historyController,
-      iconColor: const Color(0xFFE1CDB5),
-      collapsedIconColor: const Color(0xFFE1CDB5),
+      collapsedIconColor: Theme.of(context).colorScheme.primary,
       onExpansionChanged: (value) => _handleExpansionChanged(0, value),
       children: [
         ChangeNotifierProvider<HistoryViewModel>.value(
@@ -137,9 +136,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
             builder: (context, value, _) {
               switch (value.response.status) {
                 case Status.loading:
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Center(child: CircularProgressIndicator(color: Color(0xFFE1CDB5))),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Center(
+                      child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
+                    ),
                   );
                 case Status.error:
                   return Padding(
@@ -184,7 +185,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
           child: Text(
             category.label,
-            style: const TextStyle(color: Color(0xFFE1CDB5), fontWeight: FontWeight.bold),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w500),
           ),
         ),
         ListView.builder(
@@ -199,14 +200,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 _showPopupMenu(details.globalPosition, category.histories[index].chatgroupId!);
               },
               child: Container(
-                color: category.histories[index].chatgroupId == widget.currentChatgroupId ? const Color(0xAA222831) : null,
+                color: category.histories[index].chatgroupId == widget.currentChatgroupId ? Theme.of(context).primaryColor : null,
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   dense: true,
                   visualDensity: VisualDensity.compact,
                   title: Text(
                     category.histories[index].chat!,
-                    style: const TextStyle(color: Color(0xFFE1CDB5)),
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
                     overflow: TextOverflow.ellipsis,
                   ),
                   onTap: () {
@@ -226,24 +227,25 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   Widget _buildSettingTile() {
     return ExpansionTile(
-      title: const Text(
+      title: Text(
         'Pengaturan',
         style: TextStyle(
-          color: Color(0xFFE1CDB5),
+          color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.bold,
         ),
       ),
       controller: settingController,
-      iconColor: const Color(0xFFE1CDB5),
-      collapsedIconColor: const Color(0xFFE1CDB5),
+      collapsedIconColor: Theme.of(context).colorScheme.primary,
       onExpansionChanged: (value) => _handleExpansionChanged(1, value),
       children: [
         _buildSettingsItem(
-          title: 'Ubah Email',
-          onTapEvent: () => Navigator.pop(context),
+          title: 'Pilih Tema',
+          icon: Icons.brightness_6_sharp,
+          onTapEvent: () => _showThemeDialog(),
         ),
         _buildSettingsItem(
           title: 'Ubah Password',
+          icon: Icons.lock_reset_sharp,
           onTapEvent: () => Navigator.pop(context),
         ),
         _buildSettingsItem(
@@ -260,15 +262,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget _buildSettingsItem({
     required String title,
     required VoidCallback onTapEvent,
-    Color? color = const Color(0xFFE1CDB5),
-    FontWeight? weight = FontWeight.normal,
-    IconData? icon,
+    required IconData icon,
+    FontWeight? weight = FontWeight.w500,
+    Color? color,
   }) {
     return ListTile(
-      leading: icon != null ? Icon(icon, color: color) : null,
+      leading: Icon(icon, color: color ?? Theme.of(context).colorScheme.primary.withOpacity(0.75)),
       title: Text(
         title,
-        style: TextStyle(color: color, fontWeight: weight),
+        style: TextStyle(color: color ?? Theme.of(context).colorScheme.primary, fontWeight: weight),
       ),
       onTap: onTapEvent,
     );
@@ -279,7 +281,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     showMenu(
       context: context,
-      color: const Color(0xFF393E46),
+      color: Theme.of(context).primaryColor,
+      surfaceTintColor: Colors.transparent,
       constraints: const BoxConstraints(maxWidth: 100),
       position: RelativeRect.fromRect(
         Rect.fromLTWH(position.dx, position.dy, 0, 0),
@@ -312,12 +315,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF393E46),
-          title: Text(title, style: const TextStyle(color: Color(0xFFE1CDB5))),
-          content: Text(content, style: const TextStyle(color: Color(0xFFE1CDB5))),
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Theme.of(context).colorScheme.background,
+          title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+          content: Text(content, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
           actions: [
             TextButton(
-              child: const Text("Batal", style: TextStyle(color: Color(0xFFE1CDB5))),
+              child: const Text("Batal"),
               onPressed: () {
                 Navigator.of(context).pop();
                 completer.complete(false);
@@ -336,5 +340,66 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
 
     return completer.future;
+  }
+
+  void _showThemeDialog() {
+    ThemeMode selectedTheme = Const.themeMode;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: Theme.of(context).colorScheme.background,
+            title: Text('Pilih Tema', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+            content: SizedBox(
+              width: 280,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: ThemeMode.values.map((theme) {
+                  return RadioListTile<ThemeMode>(
+                    contentPadding: const EdgeInsets.all(0),
+                    value: theme,
+                    groupValue: selectedTheme,
+                    onChanged: (ThemeMode? value) {
+                      if (value != null) {
+                        setState(() => selectedTheme = value);
+                      }
+                    },
+                    title: Text(
+                      _getThemeModeName(theme),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await Const.changeTheme(selectedTheme);
+                },
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  String _getThemeModeName(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.system:
+        return 'Sistem (Default)';
+      case ThemeMode.light:
+        return 'Terang';
+      case ThemeMode.dark:
+        return 'Gelap';
+      default:
+        return '';
+    }
   }
 }
