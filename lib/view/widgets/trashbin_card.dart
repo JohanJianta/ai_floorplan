@@ -1,6 +1,6 @@
 part of 'widgets.dart';
 
-class TrashbinCard extends CardBase {
+class TrashbinCard extends BaseCard {
   final Function(Floorplan) onRestore;
   final Function(Floorplan) onDelete;
 

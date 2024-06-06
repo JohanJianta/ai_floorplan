@@ -27,8 +27,14 @@ class _GalleryPageState extends State<GalleryPage> {
   }
 
   void _deleteAllCardFloorplans(Set<Floorplan> floorplans) async {
-    bool isConfirmed = await _showAlertDialog();
+    bool isConfirmed = await Util.showAlertDialog(
+      context: context,
+      title: 'Konfirmasi Penghapusan',
+      content: 'Apakah anda yakin ingin memindahkan floorplan ke Sampah?',
+    );
     if (isConfirmed) {
+      Navigator.of(context).popUntil((route) => route.settings.name == '/gallery');
+
       final message = await galleryViewModel.deleteFloorplans(floorplans);
       _showSnackbar(message);
 
@@ -231,45 +237,5 @@ class _GalleryPageState extends State<GalleryPage> {
         }
       },
     );
-  }
-
-  Future<bool> _showAlertDialog() async {
-    Completer<bool> completer = Completer<bool>();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Theme.of(context).colorScheme.background,
-          title: Text(
-            "Konfirmasi Penghapusan",
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          content: Text(
-            "Apakah anda yakin ingin memindahkan floorplan ke Sampah?",
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          actions: [
-            TextButton(
-              child: const Text("Batal"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                completer.complete(false);
-              },
-            ),
-            TextButton(
-              child: const Text("Hapus", style: TextStyle(color: Colors.red)),
-              onPressed: () {
-                Navigator.of(context).popUntil((route) => route.settings.name == '/gallery');
-                completer.complete(true);
-              },
-            ),
-          ],
-        );
-      },
-    );
-
-    return completer.future;
   }
 }

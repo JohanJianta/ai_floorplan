@@ -1,6 +1,6 @@
 part of 'widgets.dart';
 
-class GalleryCard extends CardBase {
+class GalleryCard extends BaseCard {
   final Function(Floorplan) onDelete;
 
   const GalleryCard({

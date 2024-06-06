@@ -1,12 +1,12 @@
 part of 'widgets.dart';
 
-abstract class CardBase extends StatefulWidget {
+abstract class BaseCard extends StatefulWidget {
   final Floorplan floorplan;
   final bool selectionView;
   final bool isSelected;
   final Function(Floorplan) onSelected;
 
-  const CardBase({
+  const BaseCard({
     super.key,
     required this.floorplan,
     required this.selectionView,
@@ -15,10 +15,10 @@ abstract class CardBase extends StatefulWidget {
   });
 
   @override
-  BaseCardState<CardBase> createState();
+  BaseCardState<BaseCard> createState();
 }
 
-abstract class BaseCardState<T extends CardBase> extends State<T> {
+abstract class BaseCardState<T extends BaseCard> extends State<T> {
   late bool _isSelected;
   late double _maskOpacity;
 

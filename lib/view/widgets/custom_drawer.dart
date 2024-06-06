@@ -34,10 +34,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   void _handleRemoveHistory(int chatgroupId) async {
     try {
-      bool isConfirmed = await _showAlertDialog(
+      bool isConfirmed = await Util.showAlertDialog(
+        context: context,
         title: 'Konfirmasi Penghapusan',
         content: 'Apakah anda yakin ingin menghapus chatgroup ini?',
-        primaryText: 'Hapus',
       );
       if (!isConfirmed) return;
 
@@ -50,7 +50,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   void _handleLogOut() async {
-    bool isConfirmed = await _showAlertDialog(
+    bool isConfirmed = await Util.showAlertDialog(
+      context: context,
       title: 'Konfirmasi Keluar',
       content: 'Apakah anda yakin ingin keluar dari akun anda?',
       primaryText: 'Keluar',
@@ -302,44 +303,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
       ],
     );
-  }
-
-  Future<bool> _showAlertDialog({
-    required String title,
-    required String content,
-    required String primaryText,
-  }) async {
-    Completer<bool> completer = Completer<bool>();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          surfaceTintColor: Colors.transparent,
-          backgroundColor: Theme.of(context).colorScheme.background,
-          title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-          content: Text(content, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-          actions: [
-            TextButton(
-              child: const Text("Batal"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                completer.complete(false);
-              },
-            ),
-            TextButton(
-              child: Text(primaryText, style: const TextStyle(color: Colors.red)),
-              onPressed: () {
-                Navigator.of(context).pop();
-                completer.complete(true);
-              },
-            ),
-          ],
-        );
-      },
-    );
-
-    return completer.future;
   }
 
   void _showThemeDialog() {

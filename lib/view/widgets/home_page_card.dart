@@ -1,6 +1,6 @@
 part of 'widgets.dart';
 
-class HomePageCard extends CardBase {
+class HomePageCard extends BaseCard {
   final Function(Floorplan) onSave;
 
   static void _defaultOnSelected(Floorplan fp) {}

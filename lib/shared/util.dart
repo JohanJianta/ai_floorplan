@@ -8,6 +8,45 @@ class Util {
     );
   }
 
+  static Future<bool> showAlertDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+    String primaryText = 'Hapus',
+  }) async {
+    Completer<bool> completer = Completer<bool>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Theme.of(context).colorScheme.background,
+          title: Text(title, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+          content: Text(content, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+          actions: [
+            TextButton(
+              child: const Text("Batal"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                completer.complete(false);
+              },
+            ),
+            TextButton(
+              child: Text(primaryText, style: const TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                completer.complete(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    return completer.future;
+  }
+
   static Future<void> saveImage(BuildContext context, String base64String) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     late String message;
