@@ -1,8 +1,9 @@
 part of 'widgets.dart';
 
 class CustomDrawer extends StatefulWidget {
-  const CustomDrawer({super.key, required this.onChatgroupSelected, required this.onChatgroupDeleted});
+  const CustomDrawer({super.key, required this.currentChatgroupId, required this.onChatgroupSelected, required this.onChatgroupDeleted});
 
+  final int currentChatgroupId;
   final Function(int) onChatgroupSelected;
   final Function(int) onChatgroupDeleted;
 
@@ -12,17 +13,31 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   late HistoryViewModel historyViewModel;
+  final historyController = ExpansionTileController();
+  final settingController = ExpansionTileController();
 
   void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(message));
+    ScaffoldMessenger.of(context).showSnackBar(Util.getSnackBar(context, message));
+  }
+
+  void _handleExpansionChanged(int index, bool isExpanded) {
+    if (!isExpanded) return;
+
+    if (index == 0) {
+      settingController.collapse();
+    }
+
+    if (index == 1) {
+      historyController.collapse();
+    }
   }
 
   void _handleRemoveHistory(int chatgroupId) async {
     try {
-      bool isConfirmed = await _showAlertDialog(
+      bool isConfirmed = await Util.showAlertDialog(
+        context: context,
         title: 'Konfirmasi Penghapusan',
         content: 'Apakah anda yakin ingin menghapus chatgroup ini?',
-        primaryText: 'Hapus',
       );
       if (!isConfirmed) return;
 
@@ -35,7 +50,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   void _handleLogOut() async {
-    bool isConfirmed = await _showAlertDialog(
+    bool isConfirmed = await Util.showAlertDialog(
+      context: context,
       title: 'Konfirmasi Keluar',
       content: 'Apakah anda yakin ingin keluar dari akun anda?',
       primaryText: 'Keluar',
@@ -65,12 +81,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: const Color(0xFF393E46),
+        color: Theme.of(context).colorScheme.background,
         padding: const EdgeInsets.only(top: 48, bottom: 20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              _buildHistoryTile(),
               _buildDrawerItem(
                 title: 'Galeri',
                 onTapEvent: () => Navigator.of(context).pushNamed('/gallery'),
@@ -79,7 +96,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 title: 'Sampah',
                 onTapEvent: () => Navigator.of(context).pushNamed('/trashbin'),
               ),
-              _buildExpansionPanel(),
+              _buildSettingTile(),
             ],
           ),
         ),
@@ -91,8 +108,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
     return ListTile(
       title: Text(
         title,
-        style: const TextStyle(
-          color: Color(0xFFE1CDB5),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -100,137 +117,175 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
-  Widget _buildExpansionPanel() {
-    return ExpansionPanelList.radio(
-      elevation: 0,
-      expandIconColor: const Color(0xFFE1CDB5),
-      dividerColor: const Color(0xFF393E46),
+  Widget _buildHistoryTile() {
+    return ExpansionTile(
+      title: Text(
+        'Riwayat',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      initiallyExpanded: true,
+      controller: historyController,
+      collapsedIconColor: Theme.of(context).colorScheme.primary,
+      onExpansionChanged: (value) => _handleExpansionChanged(0, value),
       children: [
-        _buildHistoryExpansionPanel(),
-        _buildSettingsExpansionPanel(),
+        ChangeNotifierProvider<HistoryViewModel>.value(
+          value: historyViewModel,
+          child: Consumer<HistoryViewModel>(
+            builder: (context, value, _) {
+              switch (value.response.status) {
+                case Status.loading:
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Center(
+                      child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
+                    ),
+                  );
+                case Status.error:
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      value.response.message.toString(),
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                case Status.completed:
+                  return _buildHistoryList(value);
+                default:
+                  return Container();
+              }
+            },
+          ),
+        ),
       ],
     );
   }
 
-  ExpansionPanelRadio _buildHistoryExpansionPanel() {
-    return ExpansionPanelRadio(
-      value: 'History',
-      backgroundColor: const Color(0xFF393E46),
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return const ListTile(
-          title: Text(
-            'Riwayat',
-            style: TextStyle(
-              color: Color(0xFFE1CDB5),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      },
-      body: ChangeNotifierProvider<HistoryViewModel>.value(
-        value: historyViewModel,
-        child: Consumer<HistoryViewModel>(
-          builder: (context, value, _) {
-            return _buildHistoryPanelBody(value);
-          },
-        ),
-      ),
-      canTapOnHeader: true,
-    );
-  }
-
-  Widget _buildHistoryPanelBody(HistoryViewModel value) {
-    switch (value.historyList.status) {
-      case Status.loading:
-        return const Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
-          child: Center(child: CircularProgressIndicator(color: Color(0xFFE1CDB5))),
-        );
-      case Status.error:
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            value.historyList.message.toString(),
-            style: const TextStyle(color: Colors.red),
-          ),
-        );
-      case Status.completed:
-        return _buildHistoryList(value);
-      default:
-        return Container();
-    }
-  }
-
-  ExpansionPanelRadio _buildSettingsExpansionPanel() {
-    return ExpansionPanelRadio(
-      value: 'Setting',
-      backgroundColor: const Color(0xFF393E46),
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return const ListTile(
-          title: Text(
-            'Pengaturan',
-            style: TextStyle(
-              color: Color(0xFFE1CDB5),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      },
-      body: Column(
-        children: [
-          _buildSettingsItem(
-            title: 'Ubah Email',
-            onTapEvent: () => Navigator.pop(context),
-          ),
-          _buildSettingsItem(
-            title: 'Ubah Password',
-            onTapEvent: () => Navigator.pop(context),
-          ),
-          _buildSettingsItem(
-            title: 'Keluar',
-            weight: FontWeight.bold,
-            icon: Icons.logout_sharp,
-            color: Colors.red,
-            onTapEvent: _handleLogOut,
-          ),
-        ],
-      ),
-      canTapOnHeader: true,
-    );
-  }
-
   Widget _buildHistoryList(HistoryViewModel value) {
+    if (value.response.data != null && value.response.data!.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.only(top: 10, bottom: 30),
+        child: Center(
+          child: Text('Riwayat anda kosong',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              )),
+        ),
+      );
+    }
+
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: 480),
       child: ListView.builder(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const ScrollPhysics(),
-        itemCount: value.historyList.data!.length,
+        itemCount: value.response.data?.length,
         itemBuilder: (context, index) {
-          return GestureDetector(
-            onLongPressStart: (details) {
-              // Tampilkan pop up menu untuk hapus history
-              _showPopupMenu(details.globalPosition, value.historyList.data![index].chatgroupId!);
-            },
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              dense: true,
-              visualDensity: VisualDensity.compact,
-              title: Text(
-                value.historyList.data![index].chat!,
-                style: const TextStyle(color: Color(0xFFE1CDB5)),
-                overflow: TextOverflow.ellipsis,
-              ),
-              onTap: () {
-                // Tutup drawer, kemudian tampilkan data chat di homepage
-                Navigator.pop(context);
-                widget.onChatgroupSelected(value.historyList.data![index].chatgroupId!);
-              },
-            ),
-          );
+          return _buildCategory(value.response.data![index]);
         },
       ),
+    );
+  }
+
+  Widget _buildCategory(CategorizedHistory category) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Text(
+            category.label,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w500),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: category.histories.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onLongPressStart: (details) {
+                // Tampilkan pop up menu untuk hapus history
+                _showPopupMenu(details.globalPosition, category.histories[index].chatgroupId!);
+              },
+              child: Container(
+                color: category.histories[index].chatgroupId == widget.currentChatgroupId ? Theme.of(context).primaryColor : null,
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  dense: true,
+                  visualDensity: VisualDensity.compact,
+                  title: Text(
+                    category.histories[index].chat!,
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    // Tutup drawer, kemudian tampilkan data chat di homepage
+                    Navigator.pop(context);
+                    widget.onChatgroupSelected(category.histories[index].chatgroupId!);
+                  },
+                ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  Widget _buildSettingTile() {
+    return ExpansionTile(
+      title: Text(
+        'Pengaturan',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      controller: settingController,
+      collapsedIconColor: Theme.of(context).colorScheme.primary,
+      onExpansionChanged: (value) => _handleExpansionChanged(1, value),
+      children: [
+        _buildSettingsItem(
+          title: 'Pilih Tema',
+          icon: Icons.brightness_6_sharp,
+          onTapEvent: () => _showThemeDialog(),
+        ),
+        _buildSettingsItem(
+          title: 'Perbarui Kata Sandi',
+          icon: Icons.lock_reset_sharp,
+          onTapEvent: () => Navigator.of(context).pushNamed('/changePassword'),
+        ),
+        _buildSettingsItem(
+          title: 'Keluar',
+          weight: FontWeight.bold,
+          icon: Icons.logout_sharp,
+          color: Colors.red,
+          onTapEvent: _handleLogOut,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSettingsItem({
+    required String title,
+    required VoidCallback onTapEvent,
+    required IconData icon,
+    FontWeight? weight = FontWeight.w500,
+    Color? color,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: color ?? Theme.of(context).colorScheme.primary.withOpacity(0.75)),
+      title: Text(
+        title,
+        style: TextStyle(color: color ?? Theme.of(context).colorScheme.primary, fontWeight: weight),
+      ),
+      onTap: onTapEvent,
     );
   }
 
@@ -239,7 +294,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     showMenu(
       context: context,
-      color: const Color(0xFF393E46),
+      color: Theme.of(context).primaryColor,
+      surfaceTintColor: Colors.transparent,
       constraints: const BoxConstraints(maxWidth: 100),
       position: RelativeRect.fromRect(
         Rect.fromLTWH(position.dx, position.dy, 0, 0),
@@ -261,57 +317,64 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
-  Future<bool> _showAlertDialog({
-    required String title,
-    required String content,
-    required String primaryText,
-  }) async {
-    Completer<bool> completer = Completer<bool>();
+  void _showThemeDialog() {
+    ThemeMode selectedTheme = Const.themeMode;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF393E46),
-          title: Text(title, style: const TextStyle(color: Color(0xFFE1CDB5))),
-          content: Text(content, style: const TextStyle(color: Color(0xFFE1CDB5))),
-          actions: [
-            TextButton(
-              child: const Text("Batal", style: TextStyle(color: Color(0xFFE1CDB5))),
-              onPressed: () {
-                Navigator.of(context).pop();
-                completer.complete(false);
-              },
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: Theme.of(context).colorScheme.background,
+            title: Text('Pilih Tema', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+            content: SizedBox(
+              width: 280,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: ThemeMode.values.map((theme) {
+                  return RadioListTile<ThemeMode>(
+                    contentPadding: const EdgeInsets.all(0),
+                    value: theme,
+                    groupValue: selectedTheme,
+                    onChanged: (ThemeMode? value) {
+                      if (value != null) {
+                        setState(() => selectedTheme = value);
+                      }
+                    },
+                    title: Text(
+                      _getThemeModeName(theme),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
-            TextButton(
-              child: Text(primaryText, style: const TextStyle(color: Colors.red)),
-              onPressed: () {
-                Navigator.of(context).pop();
-                completer.complete(true);
-              },
-            ),
-          ],
-        );
+            actions: [
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await Const.changeTheme(selectedTheme);
+                },
+              ),
+            ],
+          );
+        });
       },
     );
-
-    return completer.future;
   }
 
-  Widget _buildSettingsItem({
-    required String title,
-    required VoidCallback onTapEvent,
-    Color? color = const Color(0xFFE1CDB5),
-    FontWeight? weight = FontWeight.normal,
-    IconData? icon,
-  }) {
-    return ListTile(
-      leading: icon != null ? Icon(icon, color: color) : null,
-      title: Text(
-        title,
-        style: TextStyle(color: color, fontWeight: weight),
-      ),
-      onTap: onTapEvent,
-    );
+  String _getThemeModeName(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.system:
+        return 'Sistem (Default)';
+      case ThemeMode.light:
+        return 'Terang';
+      case ThemeMode.dark:
+        return 'Gelap';
+      default:
+        return '';
+    }
   }
 }

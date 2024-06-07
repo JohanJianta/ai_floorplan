@@ -1,6 +1,6 @@
 part of 'widgets.dart';
 
-class GalleryCard extends CardBase {
+class GalleryCard extends BaseCard {
   final Function(Floorplan) onDelete;
 
   const GalleryCard({
@@ -8,8 +8,6 @@ class GalleryCard extends CardBase {
     required super.floorplan,
     required super.selectionView,
     required super.isSelected,
-    required super.secondaryColor,
-    required super.tertiaryColor,
     required super.onSelected,
     required this.onDelete,
   });
@@ -29,16 +27,19 @@ class _GalleryCardState extends BaseCardState<GalleryCard> {
     return [
       buildActionButton(
         icon: Icons.share_sharp,
+        label: 'Bagikan',
         onPressed: () => Util.shareImages(context, [widget.floorplan.imageData!]),
       ),
       const SizedBox(width: 16),
       buildActionButton(
         icon: Icons.download_sharp,
+        label: 'Unduh',
         onPressed: () => Util.saveImage(context, widget.floorplan.imageData!),
       ),
       const SizedBox(width: 16),
       buildActionButton(
         icon: Icons.delete_sharp,
+        label: 'Hapus',
         onPressed: () => widget.onDelete(widget.floorplan),
       ),
     ];

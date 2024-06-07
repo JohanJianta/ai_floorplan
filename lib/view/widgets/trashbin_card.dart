@@ -1,6 +1,6 @@
 part of 'widgets.dart';
 
-class TrashbinCard extends CardBase {
+class TrashbinCard extends BaseCard {
   final Function(Floorplan) onRestore;
   final Function(Floorplan) onDelete;
 
@@ -9,8 +9,6 @@ class TrashbinCard extends CardBase {
     required super.floorplan,
     required super.selectionView,
     required super.isSelected,
-    required super.secondaryColor,
-    required super.tertiaryColor,
     required super.onSelected,
     required this.onRestore,
     required this.onDelete,
@@ -23,6 +21,11 @@ class TrashbinCard extends CardBase {
 class _TrashbinCardState extends BaseCardState<TrashbinCard> {
   @override
   Widget addThumbnailProperty() {
+    Color textColor = Theme.of(context).colorScheme.background;
+
+    if (Theme.of(context).brightness == Brightness.dark) {
+      textColor = Theme.of(context).colorScheme.primary;
+    }
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -33,7 +36,7 @@ class _TrashbinCardState extends BaseCardState<TrashbinCard> {
         padding: const EdgeInsets.all(4),
         child: Text(
           getDateTimeLeft(widget.floorplan.createTime),
-          style: TextStyle(color: widget.secondaryColor, fontWeight: FontWeight.w500),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
           textAlign: TextAlign.center,
         ),
       ),
@@ -45,6 +48,7 @@ class _TrashbinCardState extends BaseCardState<TrashbinCard> {
     return [
       super.buildActionButton(
         icon: Icons.restore_sharp,
+        label: 'Pulihkan',
         onPressed: () {
           Navigator.of(context).pop();
           widget.onRestore(widget.floorplan);
@@ -53,6 +57,7 @@ class _TrashbinCardState extends BaseCardState<TrashbinCard> {
       const SizedBox(width: 16),
       super.buildActionButton(
         icon: Icons.delete_forever_sharp,
+        label: 'Hapus Permanen',
         onPressed: () => widget.onDelete(widget.floorplan),
       ),
     ];

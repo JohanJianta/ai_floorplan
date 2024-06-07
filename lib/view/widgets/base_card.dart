@@ -1,28 +1,24 @@
 part of 'widgets.dart';
 
-abstract class CardBase extends StatefulWidget {
+abstract class BaseCard extends StatefulWidget {
   final Floorplan floorplan;
   final bool selectionView;
-  final Color tertiaryColor;
-  final Color secondaryColor;
   final bool isSelected;
   final Function(Floorplan) onSelected;
 
-  const CardBase({
+  const BaseCard({
     super.key,
     required this.floorplan,
     required this.selectionView,
     required this.isSelected,
-    required this.secondaryColor,
-    required this.tertiaryColor,
     required this.onSelected,
   });
 
   @override
-  BaseCardState<CardBase> createState();
+  BaseCardState<BaseCard> createState();
 }
 
-abstract class BaseCardState<T extends CardBase> extends State<T> {
+abstract class BaseCardState<T extends BaseCard> extends State<T> {
   late bool _isSelected;
   late double _maskOpacity;
 
@@ -96,9 +92,10 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                 height: 20,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.tertiaryColor.withOpacity(0.4),
-                  border: Border.all(width: 2.5, color: widget.tertiaryColor),
-                ))
+                  color: const Color(0xFF31363F).withOpacity(0.4),
+                  border: Border.all(width: 2.5, color: const Color(0xFF31363F)),
+                ),
+              )
             : const Icon(
                 Icons.check_circle_sharp,
                 color: Colors.blue,
@@ -109,11 +106,13 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
 
   void _showImageDialog() {
     showDialog(
+      barrierColor: const Color.fromARGB(221, 21, 21, 21),
       context: context,
       builder: (context) {
         return Dialog(
             insetPadding: const EdgeInsets.symmetric(horizontal: 16),
             backgroundColor: Colors.transparent,
+            elevation: 0,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -123,29 +122,32 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
                     alignment: Alignment.topRight,
                     child: ClipOval(
                       child: Container(
-                        color: widget.tertiaryColor,
+                        color: Theme.of(context).primaryColor,
                         child: IconButton(
                           onPressed: () => Navigator.of(context).pop(),
                           icon: const Icon(Icons.close_sharp),
-                          color: widget.secondaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Image.memory(base64Decode(widget.floorplan.imageData!)),
+                  WidgetZoom(
+                    heroAnimationTag: 'floorplanTag',
+                    zoomWidget: Image.memory(base64Decode(widget.floorplan.imageData!)),
+                  ),
                   Container(
                     height: 150,
                     margin: const EdgeInsets.symmetric(vertical: 24),
                     padding: const EdgeInsets.all(12),
-                    color: widget.tertiaryColor,
+                    color: Theme.of(context).primaryColor,
                     alignment: Alignment.center,
                     child: SingleChildScrollView(
                       child: Text(
                         '${widget.floorplan.prompt}',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: widget.secondaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
                         ),
@@ -163,12 +165,23 @@ abstract class BaseCardState<T extends CardBase> extends State<T> {
     );
   }
 
-  Widget buildActionButton({required IconData icon, required VoidCallback onPressed}) {
+  Widget buildActionButton({required IconData icon, required String label, required VoidCallback onPressed}) {
     return Expanded(
-      child: Container(
-        height: 50,
-        color: widget.tertiaryColor,
-        child: IconButton(onPressed: onPressed, icon: Icon(icon, color: widget.secondaryColor)),
+      child: SizedBox(
+        height: 55,
+        child: Material(
+          color: Theme.of(context).primaryColor,
+          child: InkWell(
+            onTap: onPressed,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
+                Text(label, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

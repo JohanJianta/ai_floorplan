@@ -59,33 +59,17 @@ class GalleryViewModel with ChangeNotifier {
 
     // Sortir floorplan berdasarkan kategori
     for (var floorplan in floorplans) {
-      if (_isToday(floorplan.createTime)) {
+      if (isToday(floorplan.createTime)) {
         _addToCategory(categorizedMap, 'Today', floorplan);
-      } else if (_isPrevious7Days(floorplan.createTime, previous7Days, now)) {
+      } else if (isPrevious7Days(floorplan.createTime, previous7Days, now)) {
         _addToCategory(categorizedMap, 'Previous 7 Days', floorplan);
       } else {
-        final dateLabel = _getMonthYear(floorplan.createTime);
+        final dateLabel = getMonthYear(floorplan.createTime);
         _addToCategory(categorizedMap, dateLabel, floorplan);
       }
     }
 
     return categorizedMap.entries.map((entry) => CategorizedFloorplans(entry.key, entry.value)).toList();
-  }
-
-  bool _isToday(DateTime? dateTime) {
-    if (dateTime == null) return false;
-    final now = DateTime.now();
-    return dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day;
-  }
-
-  bool _isPrevious7Days(DateTime? dateTime, DateTime previous7Days, DateTime now) {
-    if (dateTime == null) return false;
-    return dateTime.isAfter(previous7Days) && dateTime.isBefore(now);
-  }
-
-  String _getMonthYear(DateTime? dateTime) {
-    if (dateTime == null) return '';
-    return DateFormat('MMMM yyyy').format(dateTime);
   }
 
   // Masukkan floorplan ke dalam kategori

@@ -55,10 +55,14 @@ class NetworkApiServices implements BaseApiServices {
   Future getPutApiResponse(String endpoint, data) async {
     dynamic responseJson;
     try {
-      final response = await http.put(Uri.parse(Const.baseUrl + endpoint), headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': Const.auth,
-      });
+      final response = await http.put(
+        Uri.parse(Const.baseUrl + endpoint),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': Const.auth,
+        },
+        body: data != null ? jsonEncode(data) : null,
+      );
       responseJson = returnResponse(response);
     } on SocketException {
       throw NoInternetException('Pastikan anda terhubung ke internet');
@@ -95,7 +99,7 @@ class NetworkApiServices implements BaseApiServices {
       case 201:
         return responseJson;
       case 400:
-        throw BadRequestException(responseJson['messages'].toString());
+        throw BadRequestException(responseJson['messages'][0]);
       case 401:
         throw UnauthorizedException(responseJson['messages'][0]);
       case 403:

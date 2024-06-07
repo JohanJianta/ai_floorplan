@@ -44,4 +44,21 @@ class UserRepository {
       rethrow;
     }
   }
+
+  Future<String> updateUserData({String? newPassword, String? oldPassword, bool? isPremium}) async {
+    User user = User(password: newPassword, oldPassword: oldPassword, premium: isPremium);
+    try {
+      dynamic response = await apiServices.getPutApiResponse('/user/${Const.userId}', user.toJson());
+
+      String result = '';
+
+      if (response['success']) {
+        result = response['messages'][0].toString();
+      }
+
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

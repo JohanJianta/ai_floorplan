@@ -40,6 +40,8 @@ dependencies:
   uuid: ^3.0.5
   json_cache: ^3.0.1
   shared_preferences: ^2.2.3
+  widget_zoom: ^0.0.4
+  flutter_launcher_icons: ^0.13.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -47,6 +49,26 @@ dependencies:
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.2.0
   flutter_svg_provider: ^1.0.6
+
+# Run "flutter pub run flutter_launcher_icons" to change launcher icons
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: "ic_launcher"
+  image_path: "lib/assets/logo.png"
+  min_sdk_android: 19 # android min sdk min:16, default 21
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "lib/assets/logo.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "lib/assets/logo.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "lib/assets/logo.png"
 
 dev_dependencies:
   flutter_test:
