@@ -13,3 +13,5 @@ part 'gallery_card.dart';
 part 'trashbin_card.dart';
 part 'home_page_card.dart';
 part 'custom_drawer.dart';
+part 'custom_text_form.dart';
+part 'custom_elevated_button.dart';

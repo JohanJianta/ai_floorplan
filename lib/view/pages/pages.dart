@@ -18,3 +18,4 @@ part 'home_page.dart';
 part 'login_page.dart';
 part 'register_page.dart';
 part 'splashscreen_page.dart';
+part 'change_password_page.dart';

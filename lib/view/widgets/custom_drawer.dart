@@ -164,6 +164,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   Widget _buildHistoryList(HistoryViewModel value) {
+    if (value.response.data != null && value.response.data!.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.only(top: 10, bottom: 30),
+        child: Center(
+          child: Text('Riwayat anda kosong',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              )),
+        ),
+      );
+    }
+
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: 480),
       child: ListView.builder(
@@ -245,9 +257,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
           onTapEvent: () => _showThemeDialog(),
         ),
         _buildSettingsItem(
-          title: 'Ubah Password',
+          title: 'Perbarui Kata Sandi',
           icon: Icons.lock_reset_sharp,
-          onTapEvent: () => Navigator.pop(context),
+          onTapEvent: () => Navigator.of(context).pushNamed('/changePassword'),
         ),
         _buildSettingsItem(
           title: 'Keluar',

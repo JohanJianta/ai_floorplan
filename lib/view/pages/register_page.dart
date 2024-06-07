@@ -22,7 +22,7 @@ class RegisterPage extends StatelessWidget {
       // String message = await _userRepo.register(email, password);
       // _showSnackbar(context, message);
 
-      Navigator.of(context).pushReplacementNamed('/home');
+      Navigator.of(context).pushNamedAndRemoveUntil('/home', ((route) => false));
     } catch (e) {
       _showSnackbar(context, e.toString());
     }
@@ -40,6 +40,7 @@ class RegisterPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Logo
                   SvgPicture.asset(
                     'lib/assets/logo.svg',
                     width: 80,
@@ -47,6 +48,8 @@ class RegisterPage extends StatelessWidget {
                     colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcIn),
                   ),
                   const SizedBox(height: 20),
+
+                  // Text "Register Page"
                   Text(
                     'Register Page',
                     style: TextStyle(
@@ -56,70 +59,31 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  TextFormField(
+
+                  // Email Input Field
+                  CustomTextForm(
+                    labelText: 'Email',
+                    iconData: Icons.email_sharp,
                     controller: emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                      filled: true,
-                      fillColor: Theme.of(context).colorScheme.secondary.withOpacity(0.15),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      prefixIcon: const Icon(Icons.email),
-                    ),
                   ),
                   const SizedBox(height: 16),
+
                   // Password Input Field
-                  TextFormField(
-                    controller: passwordController,
+                  CustomTextForm(
+                    labelText: 'Kata Sandi',
+                    iconData: Icons.lock_sharp,
                     obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                      filled: true,
-                      fillColor: Theme.of(context).colorScheme.secondary.withOpacity(0.15),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      prefixIcon: const Icon(Icons.lock),
-                    ),
+                    controller: passwordController,
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => handleRegister(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.tertiary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
-                        child: Text(
-                          'Register',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                      ),
-                    ),
+
+                  // Register Button
+                  CustomElevatedButton(
+                    buttonText: 'Daftar',
+                    onPressed: () => handleRegister(context),
                   ),
                   const SizedBox(height: 16),
+
                   // Divider and "Continue as a guest" Button
                   Row(
                     children: [
@@ -167,6 +131,8 @@ class RegisterPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
+
+                  // Continue as a guest Button
                   TextButton(
                     onPressed: () {
                       // TODO: Tambahkan logika untuk "Continue as a guest" di sini
